@@ -76,7 +76,7 @@ However classes are not exported. This causes a warning to appear in the console
 [1]: https://github.com/skilldrick/6502js  "(Nick Morgan, 2020)"
 [2]: https://www.youtube.com/watch?v=qJgsuQoy9bc	"(Dave Poo, 2020)"
 [3]: http://www.obelisk.me.uk/6502/ "(Andrew Jacobs, 2009)"
-[4]: https://stackoverflow.com/a/45396754/2107659 "Brad Robinson, 2017"
+[4]: https://stackoverflow.com/a/45396754/2107659 "(Brad Robinson, 2017)"
 
 [1] Morgan, N. (2020). skilldrick/easy6502. Retrieved 15 January 2021, from [https://github.com/skilldrick/easy6502](https://github.com/skilldrick/easy6502)
 
