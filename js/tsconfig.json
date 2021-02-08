@@ -1,0 +1,16 @@
+{
+  // "compilerOptions": {
+  //   "module": "ES6",
+  //   "target": "ES2016",
+  // },
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2016",
+  },
+  "include": [
+    "*.ts", 
+    "models/*.ts"
+  ],
+  "outDir": "/js/dist",
+  "allowSyntheticDefaultImports": true
+}

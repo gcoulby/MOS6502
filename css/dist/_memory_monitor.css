@@ -1,0 +1,32 @@
+.monitor-table {
+  max-height: 600px;
+  font-size: 12px;
+}
+
+.monitor-table td {
+  padding: 0.3em 0.2em;
+}
+
+.monitor-table td, .monitor-table th {
+  padding: 0.3em 0.2em !important;
+}
+
+#ascii-window {
+  padding: 0 2em;
+}
+
+.addr {
+  font-weight: 700;
+}
+
+.hovered {
+  background: #2b2b2b;
+  border-width: 1px;
+  border-style: solid;
+  border-color: white !important;
+}
+
+#bank {
+  height: 2.5em;
+  font-size: 20px;
+}

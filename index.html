@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>MOS 6502: Javascript Emulator</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/dist/main.css" rel="stylesheet">
+</head>
+
+<body data-theme="dark">
+  <!-- Page Content -->
+  <div class="container  mt-5">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <!-- <h1 class="mt-5">MOS 6502</h1> -->
+        <div class="container">
+          <div class="row">
+            <textarea class="col-7 tab-support" id="code"></textarea>
+
+            <div id="screen-surround" class="col-5">
+              <canvas id="screen" style="background-color: black; width: 100%;"></canvas>
+            </div>
+          </div>
+
+          <!-- Memory Monitor -->
+          <div id="memory-monitor" class="row mt-4">
+            <div class="col">
+              <div class="row">
+                <div class="col-12">
+                  <table class="table table-bordered table-dark" style="font-size: 20px;">
+                    <thead>
+                      <th>A</th>
+                      <th>X</th>
+                      <th>Y</th>
+                      <th style="width: 5em;"></th>
+                      <th>SP</th>
+                      <th>PC</th>
+                      <th style="width: 5em;"></th>
+                      <th>N</th>
+                      <th>V</th>
+                      <th>-</th>
+                      <th>B</th>
+                      <th>D</th>
+                      <th>I</th>
+                      <th>Z</th>
+                      <th>C</th>
+                    </thead>
+                    <tbody>
+                      <td id="a-reg">$00</td>
+                      <td id="x-reg">$00</td>
+                      <td id="y-reg">$00</td>
+                      <td></td>
+                      <td id="sp-reg">$0000</td>
+                      <td id="pc-reg">$0000</td>
+                      <td></td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="n-flag" disabled />
+                          <label for="n-flag"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="v-flag" disabled />
+                          <label for="v-flag"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="" checked disabled />
+                          <label for=""></label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="b-flag" disabled />
+                          <label for="b-flag"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="d-flag" disabled />
+                          <label for="d-flag"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="i-flag" disabled />
+                          <label for="i-flag"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="z-flag" disabled />
+                          <label for="z-flag"></label>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="check">
+                          <input type="checkbox" id="c-flag" disabled />
+                          <label for="c-flag"></label>
+                        </div>
+                      </td>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col-4">
+                  <div class="input-group mb-3">
+                    <label for="bank" style="font-size: 32px; margin-bottom: 0;">$ &nbsp;</label>
+                    <input id="bank" type="text" class="form-control" placeholder="Address" aria-label="Address"
+                      aria-describedby="basic-addon2" value="FF00" onkeydown="memory_monitor.bank_keypress(event)">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button" onclick="memory_monitor.bank_select()">GOTO</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-8">
+                  <div class="col">
+                    <div id="memory-monitor-alert" class="alert alert-dark" role="alert"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mt-4">
+                <div id="memory-window" class="col-8">
+                  <table class="table monitor-table table-dark">
+                    <thead>
+                      <tr>
+                        <th scope="col" style="width: 10%;">ADDR</th>
+                        <th scope="col">00</th>
+                        <th scope="col">01</th>
+                        <th scope="col">02</th>
+                        <th scope="col">03</th>
+                        <th scope="col">04</th>
+                        <th scope="col">05</th>
+                        <th scope="col">06</th>
+                        <th scope="col">07</th>
+                        <th scope="col">08</th>
+                        <th scope="col">09</th>
+                        <th scope="col">0A</th>
+                        <th scope="col">0B</th>
+                        <th scope="col">0C</th>
+                        <th scope="col">0D</th>
+                        <th scope="col">0E</th>
+                        <th scope="col">0F</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+
+                <div id="ascii-window" class="col-4">
+                  <table class="table monitor-table table-dark">
+                    <thead>
+                      <tr>
+                        <th scope="col" style="width: 6%;">&nbsp;</th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                        <th scope="col" style="width: 6%;"></th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendor -->
+    <script src="vendor/jquery/jquery.slim.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- Models and Enums -->
+    <script src="js/dist/extensions.js"></script>
+    <script src="js/dist/register.js"></script>
+    <script src="js/dist/instruction.js"></script>
+    <script src="js/dist/flag.js"></script>
+
+    <!-- System Architecture Classes -->
+    <script src="js/dist/display.js"></script>
+    <script src="js/dist/memory.js"></script>
+    <script src="js/dist/cpu.js"></script>
+
+    <!-- UI Elements -->
+    <script src="js/dist/memory_monitor.js"></script>
+    <script src="js/dist/canvas.js"></script>
+    <script src="js/dist/code_editor.js"></script>
+
+    <!-- Runtime Scripts -->
+    <script src="js/dist/scripts.js"></script>
+</body>
+
+</html>

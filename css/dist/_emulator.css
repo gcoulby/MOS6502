@@ -1,0 +1,8 @@
+#screen {
+  border: 10px inset grey;
+}
+
+#screen-surround {
+  padding: 2em;
+  background: grey;
+}
