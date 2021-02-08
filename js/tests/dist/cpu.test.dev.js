@@ -13,6 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 function get_CPU() {
   var PC = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
   var program = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+  var print_bytes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var cpu = new _cpu["default"]();
   cpu.memory = new _memory["default"]();
 
@@ -22,6 +23,7 @@ function get_CPU() {
     if (program != undefined) {
       cpu.memory.load_bytes(program, PC);
       cpu.PC = PC;
+      cpu.print_bytes = print_bytes;
     }
   }
 
@@ -284,7 +286,7 @@ test('PLP pulls Processor status from the stack, sets the P Register and decreme
 });
 /*=============================================*/
 
-/*    LDA
+/*    ADC
 /*=============================================*/
 
 test('ADC #$68 Adds to accumulator (#$01) to make 0x69 adding the carry, unsetting C flag once consumed', function () {
@@ -474,6 +476,114 @@ test('ASL $2200,X shifts $220F (0x30) left 1 bit doubling the value to 0x60 if X
   cpu.X = 0x0F;
   cpu.execute();
   expect(cpu.read_byte(0x220F)).toBe(0x60);
+});
+/*=============================================*/
+
+/*    Branching
+/*=============================================*/
+
+test('BCC skips setting A to 0 because Carry is clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BCC, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+}); //TODO: Test Branch in negative direction once JSR/JMP is done 
+
+test('BCC sets A to 0 because Carry is not clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BCC, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].C);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
+});
+test('BCS skips setting A to 0 because Carry is set, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BCS, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].C);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+});
+test('BCS sets A to 0 because Carry is clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BCS, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
+});
+test('BEQ skips setting A to 0 because Zero flag is set, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BEQ, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].Z);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+});
+test('BEQ sets A to 0 because Zero flag clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BEQ, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
+});
+test('BMI skips setting A to 0 because Negative flag is set, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BMI, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].N);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+});
+test('BMI sets A to 0 because Negative flag clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BMI, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
+});
+test('BNE skips setting A to 0 because Zero flag is clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BNE, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+});
+test('BNE sets A to 0 because Zero flag set, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BNE, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].Z);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
+});
+test('BPL skips setting A to 0 because Negative flag is clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BPL, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+});
+test('BPL sets A to 0 because Negative flag is set, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BPL, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].N);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
 });
 /*=============================================*/
 

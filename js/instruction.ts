@@ -23,6 +23,19 @@ enum Instruction {
     ASL_ZPX     = 0x16,
     ASL_ABS     = 0x0E,
     ASL_ABSX    = 0x1D,
+    //BCC - Brach if Carry Clear
+    BCC         = 0x90,
+    //BCS - Brach if Carry Set
+    BCS         = 0xB0,
+    //BEQ - Brach if Equal
+    BEQ         = 0xF0,
+    //BIT
+    //BMI - Branch if Negative
+    BMI         = 0x30,
+    //BNE - Branch if Not Equal
+    BNE         = 0xD0,
+    //BPL - Branch if Positive
+    BPL         = 0x10,
     //BRK - Break
     BRK         = 0x00,
     //CLC - Clear Carry Flag
@@ -102,7 +115,8 @@ enum Instruction {
     TSX         = 0xBA,
     TXA         = 0x8A,
     TXS         = 0x9A,
-    TYA         = 0x98
+    TYA         = 0x98,
+    STOP        = 0xFF,
 }
 Object.freeze(Instruction);
 module.exports = Instruction;

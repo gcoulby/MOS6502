@@ -3,7 +3,7 @@ import Flag from '../flag';
 import Memory from '../memory';
 import CPU from '../cpu';
 
-function get_CPU(PC = undefined, program = undefined){
+function get_CPU(PC = undefined, program = undefined, print_bytes = false){
     var cpu = new CPU();
     cpu.memory = new Memory();
     if(PC != undefined){
@@ -12,6 +12,7 @@ function get_CPU(PC = undefined, program = undefined){
         if(program != undefined){
             cpu.memory.load_bytes(program, PC);
             cpu.PC = PC;
+            cpu.print_bytes = print_bytes;
         }
     }
     return cpu;
@@ -300,7 +301,7 @@ test('PLP pulls Processor status from the stack, sets the P Register and decreme
 });
 
 /*=============================================*/
-/*    LDA
+/*    ADC
 /*=============================================*/
 
 test('ADC #$68 Adds to accumulator (#$01) to make 0x69 adding the carry, unsetting C flag once consumed', () => {
@@ -511,6 +512,126 @@ test('ASL $2200,X shifts $220F (0x30) left 1 bit doubling the value to 0x60 if X
     cpu.X = 0x0F;
     cpu.execute();
     expect(cpu.read_byte(0x220F)).toBe(0x60);
+});
+
+/*=============================================*/
+/*    Branching
+/*=============================================*/
+
+test('BCC skips setting A to 0 because Carry is clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BCC, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+//TODO: Test Branch in negative direction once JSR/JMP is done 
+
+test('BCC sets A to 0 because Carry is not clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BCC, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.C);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BCS skips setting A to 0 because Carry is set, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BCS, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.C);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BCS sets A to 0 because Carry is clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BCS, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BEQ skips setting A to 0 because Zero flag is set, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BEQ, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.Z);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BEQ sets A to 0 because Zero flag clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BEQ, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BMI skips setting A to 0 because Negative flag is set, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BMI, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.N);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BMI sets A to 0 because Negative flag clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BMI, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BNE skips setting A to 0 because Zero flag is clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BNE, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BNE sets A to 0 because Zero flag set, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BNE, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.Z);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BPL skips setting A to 0 because Negative flag is clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BPL, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BPL sets A to 0 because Negative flag is set, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BPL, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.N);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
 });
 
 

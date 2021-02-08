@@ -31,7 +31,8 @@ class CPU {
     public set P(v: number) { this.#P = this.intToByte(v); }
     
     memory: Memory
-
+    print_bytes: boolean = false;
+    brk_count :number = 0;
     public constructor(memory: Memory) {
         this.A = 0x00;
         this.X = 0x00;
@@ -46,6 +47,8 @@ class CPU {
          //TODO: stop when the program finishes
         while (this.PC !== 0) {
             let ins = this.fetch_byte();
+            if(ins > 0 && this.brk_count > 0)
+                this.brk_count = 0;
             switch (ins) {
                 /*===========*/
                 /*  ADC     
@@ -163,17 +166,38 @@ class CPU {
                     var shift = this.shift_left(byte);
                     this.store_byte(abs_addr, shift);
                     break;
-                //TODO : BCC
-                //TODO : BCS
-                //TODO : BEQ
+                case Instruction.BCC: // BCC 
+                    var carry_clear = !this.check_flag(Flag.C);
+                    this.branch_if_true(carry_clear);
+                    break; 
+                case Instruction.BCS: // BCS 
+                    var carry_set = this.check_flag(Flag.C);
+                    this.branch_if_true(carry_set);
+                    break; 
+                case Instruction.BEQ: // BEQ 
+                    var zero = this.check_flag(Flag.Z);
+                    this.branch_if_true(zero);
+                    break; 
                 //TODO : BIT
-                //TODO : BMI
-                //TODO : BNE
-                //TODO : BPL
+                case Instruction.BMI: // BMI 
+                    var negative = this.check_flag(Flag.N);
+                    this.branch_if_true(negative);
+                    break; 
+                case Instruction.BNE: // BMI 
+                    var zero = !this.check_flag(Flag.Z);
+                    this.branch_if_true(zero);
+                    break; 
+                case Instruction.BPL: // BMI 
+                    var positive = !this.check_flag(Flag.N);
+                    this.branch_if_true(positive);
+                    break; 
                 //TODO : BRK
                 case Instruction.BRK: // BRK
                     //TODO: Clearing flag causings issues
                     // this.clear_flag(Flag.D);
+                    if(this.brk_count % 3 == 0)
+                        return;
+                    this.brk_count++;
                     break;
                 //TODO : BVC
                 //TODO : BVS
@@ -544,6 +568,18 @@ class CPU {
         this.set_NZ_flags(result);
         return result;
     }
+    /*================================================*/
+    /*            Relative Instructions
+    /*================================================*/
+
+    private branch_if_true(condition: boolean){
+        let offset = this.fetch_byte() - 128;
+        if(!condition) return;
+
+        this.PC += offset;
+    }
+
+
 
     /*================================================*/
     /*            Addressing     
@@ -616,6 +652,8 @@ class CPU {
     private fetch_byte(): number {
         let data = this.read_byte(this.PC);
         this.increment_register(Register.PC);
+        if(this.print_bytes)
+            console.log(data);
         return data;
     }
 

@@ -24,6 +24,19 @@ var Instruction;
     Instruction[Instruction["ASL_ZPX"] = 22] = "ASL_ZPX";
     Instruction[Instruction["ASL_ABS"] = 14] = "ASL_ABS";
     Instruction[Instruction["ASL_ABSX"] = 29] = "ASL_ABSX";
+    //BCC - Brach if Carry Clear
+    Instruction[Instruction["BCC"] = 144] = "BCC";
+    //BCS - Brach if Carry Set
+    Instruction[Instruction["BCS"] = 176] = "BCS";
+    //BEQ - Brach if Equal
+    Instruction[Instruction["BEQ"] = 240] = "BEQ";
+    //BIT
+    //BMI - Branch if Negative
+    Instruction[Instruction["BMI"] = 48] = "BMI";
+    //BNE - Branch if Not Equal
+    Instruction[Instruction["BNE"] = 208] = "BNE";
+    //BPL - Branch if Positive
+    Instruction[Instruction["BPL"] = 16] = "BPL";
     //BRK - Break
     Instruction[Instruction["BRK"] = 0] = "BRK";
     //CLC - Clear Carry Flag
@@ -104,6 +117,7 @@ var Instruction;
     Instruction[Instruction["TXA"] = 138] = "TXA";
     Instruction[Instruction["TXS"] = 154] = "TXS";
     Instruction[Instruction["TYA"] = 152] = "TYA";
+    Instruction[Instruction["STOP"] = 255] = "STOP";
 })(Instruction || (Instruction = {}));
 Object.freeze(Instruction);
 module.exports = Instruction;

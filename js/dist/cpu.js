@@ -28,6 +28,8 @@ class CPU {
         _X.set(this, void 0);
         _Y.set(this, void 0);
         _P.set(this, void 0);
+        this.print_bytes = false;
+        this.brk_count = 0;
         this.A = 0x00;
         this.X = 0x00;
         this.Y = 0x00;
@@ -52,6 +54,8 @@ class CPU {
         //TODO: stop when the program finishes
         while (this.PC !== 0) {
             let ins = this.fetch_byte();
+            if (ins > 0 && this.brk_count > 0)
+                this.brk_count = 0;
             switch (ins) {
                 /*===========*/
                 /*  ADC
@@ -169,17 +173,38 @@ class CPU {
                     var shift = this.shift_left(byte);
                     this.store_byte(abs_addr, shift);
                     break;
-                //TODO : BCC
-                //TODO : BCS
-                //TODO : BEQ
+                case instruction_1.default.BCC: // BCC 
+                    var carry_clear = !this.check_flag(flag_1.default.C);
+                    this.branch_if_true(carry_clear);
+                    break;
+                case instruction_1.default.BCS: // BCS 
+                    var carry_set = this.check_flag(flag_1.default.C);
+                    this.branch_if_true(carry_set);
+                    break;
+                case instruction_1.default.BEQ: // BEQ 
+                    var zero = this.check_flag(flag_1.default.Z);
+                    this.branch_if_true(zero);
+                    break;
                 //TODO : BIT
-                //TODO : BMI
-                //TODO : BNE
-                //TODO : BPL
+                case instruction_1.default.BMI: // BMI 
+                    var negative = this.check_flag(flag_1.default.N);
+                    this.branch_if_true(negative);
+                    break;
+                case instruction_1.default.BNE: // BMI 
+                    var zero = !this.check_flag(flag_1.default.Z);
+                    this.branch_if_true(zero);
+                    break;
+                case instruction_1.default.BPL: // BMI 
+                    var positive = !this.check_flag(flag_1.default.N);
+                    this.branch_if_true(positive);
+                    break;
                 //TODO : BRK
                 case instruction_1.default.BRK: // BRK
                     //TODO: Clearing flag causings issues
                     // this.clear_flag(Flag.D);
+                    if (this.brk_count % 3 == 0)
+                        return;
+                    this.brk_count++;
                     break;
                 //TODO : BVC
                 //TODO : BVS
@@ -519,6 +544,15 @@ class CPU {
         return result;
     }
     /*================================================*/
+    /*            Relative Instructions
+    /*================================================*/
+    branch_if_true(condition) {
+        let offset = this.fetch_byte() - 128;
+        if (!condition)
+            return;
+        this.PC += offset;
+    }
+    /*================================================*/
     /*            Addressing
     /*================================================*/
     get_zero_page_addr() {
@@ -581,6 +615,8 @@ class CPU {
     fetch_byte() {
         let data = this.read_byte(this.PC);
         this.increment_register(register_1.default.PC);
+        if (this.print_bytes)
+            console.log(data);
         return data;
     }
     fetch_word() {
