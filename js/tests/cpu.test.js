@@ -227,14 +227,6 @@ test('CLV clears the overflow flag', () => {
     expect(cpu.check_flag(Flag.V)).toBe(false);
 });
 
-test('CLV clears the overflow flag', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.CLV]));
-    cpu.set_flag(Flag.V);
-    expect(cpu.check_flag(Flag.V)).toBe(true);
-    cpu.execute();
-    expect(cpu.check_flag(Flag.V)).toBe(false);
-});
-
 test('DEX decrements the X register setting Zero flag when decremented from $01', () => {
     let cpu = get_CPU(0xF000, new Uint8Array([Instruction.DEX]));
     cpu.X = 0x01;
@@ -633,6 +625,45 @@ test('BPL sets A to 0 because Negative flag is set, but X still set to 0x69', ()
     expect(cpu.A).toBe(0x0);
     expect(cpu.X).toBe(0x69);
 });
+
+test('BVC skips setting A to 0 because Overflow flag clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BVC, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BVC sets A to 0 because Overflow flag is set, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BVC, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.V);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BVS skips setting A to 0 because Overflow flag is set, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BVS, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.set_flag(Flag.V);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+});
+
+test('BVS sets A to 0 because Overflow flag is clear, but X still set to 0x69', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BVS, 0x82, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x0);
+    expect(cpu.X).toBe(0x69);
+});
+
 
 
 /*=============================================*/

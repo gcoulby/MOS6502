@@ -37,6 +37,10 @@ var Instruction;
     Instruction[Instruction["BNE"] = 208] = "BNE";
     //BPL - Branch if Positive
     Instruction[Instruction["BPL"] = 16] = "BPL";
+    //BVC - Branch if Overflow Clear
+    Instruction[Instruction["BVC"] = 80] = "BVC";
+    //BVS - Branch if Overflow Set
+    Instruction[Instruction["BVS"] = 112] = "BVS";
     //BRK - Break
     Instruction[Instruction["BRK"] = 0] = "BRK";
     //CLC - Clear Carry Flag

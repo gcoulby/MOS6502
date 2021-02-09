@@ -36,6 +36,10 @@ enum Instruction {
     BNE         = 0xD0,
     //BPL - Branch if Positive
     BPL         = 0x10,
+    //BVC - Branch if Overflow Clear
+    BVC         = 0x50,
+    //BVS - Branch if Overflow Set
+    BVS         = 0x70,
     //BRK - Break
     BRK         = 0x00,
     //CLC - Clear Carry Flag

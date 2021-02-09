@@ -199,8 +199,14 @@ class CPU {
                         return;
                     this.brk_count++;
                     break;
-                //TODO : BVC
-                //TODO : BVS
+                case Instruction.BVC: // BVC 
+                    var overflow = !this.check_flag(Flag.V);
+                    this.branch_if_true(overflow);
+                    break; 
+                case Instruction.BVS: // BVS 
+                    var overflow = this.check_flag(Flag.V);
+                    this.branch_if_true(overflow);
+                    break; 
                 case Instruction.CLC: // CLC
                     this.clear_flag(Flag.C);
                     break;

@@ -220,13 +220,6 @@ test('CLV clears the overflow flag', function () {
   cpu.execute();
   expect(cpu.check_flag(_flag["default"].V)).toBe(false);
 });
-test('CLV clears the overflow flag', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CLV]));
-  cpu.set_flag(_flag["default"].V);
-  expect(cpu.check_flag(_flag["default"].V)).toBe(true);
-  cpu.execute();
-  expect(cpu.check_flag(_flag["default"].V)).toBe(false);
-});
 test('DEX decrements the X register setting Zero flag when decremented from $01', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].DEX]));
   cpu.X = 0x01;
@@ -579,6 +572,40 @@ test('BPL skips setting A to 0 because Negative flag is clear, but X still set t
 test('BPL sets A to 0 because Negative flag is set, but X still set to 0x69', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BPL, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
   cpu.set_flag(_flag["default"].N);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
+});
+test('BVC skips setting A to 0 because Overflow flag clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BVC, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+});
+test('BVC sets A to 0 because Overflow flag is set, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BVC, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].V);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x0);
+  expect(cpu.X).toBe(0x69);
+});
+test('BVS skips setting A to 0 because Overflow flag is set, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BVS, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  cpu.set_flag(_flag["default"].V);
+  cpu.A = 0x69;
+  cpu.X = 0x00;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.X).toBe(0x69);
+});
+test('BVS sets A to 0 because Overflow flag is clear, but X still set to 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BVS, 0x82, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
   cpu.A = 0x69;
   cpu.X = 0x00;
   cpu.execute();
