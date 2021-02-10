@@ -70,6 +70,11 @@ var Instruction;
     Instruction[Instruction["CPY_IM"] = 192] = "CPY_IM";
     Instruction[Instruction["CPY_ZP"] = 196] = "CPY_ZP";
     Instruction[Instruction["CPY_ABS"] = 204] = "CPY_ABS";
+    //DEC
+    Instruction[Instruction["DEC_ZP"] = 198] = "DEC_ZP";
+    Instruction[Instruction["DEC_ZPX"] = 214] = "DEC_ZPX";
+    Instruction[Instruction["DEC_ABS"] = 206] = "DEC_ABS";
+    Instruction[Instruction["DEC_ABSX"] = 222] = "DEC_ABSX";
     //DEX - Decrement X Register
     Instruction[Instruction["DEX"] = 202] = "DEX";
     //DEY - Decrement Y Register

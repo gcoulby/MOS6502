@@ -69,6 +69,11 @@ enum Instruction {
     CPY_IM      = 0xC0,
     CPY_ZP      = 0xC4,
     CPY_ABS     = 0xCC,
+    //DEC
+    DEC_ZP      = 0xC6,
+    DEC_ZPX     = 0xD6,
+    DEC_ABS     = 0xCE,
+    DEC_ABSX    = 0xDE,
     //DEX - Decrement X Register
     DEX         = 0xCA,
     //DEY - Decrement Y Register

@@ -800,6 +800,19 @@ test('CMP ($0),Y gets 0x69 from $0310 and compares to on accumulator (0x69) sett
 });
 /*=============================================*/
 
+/*    DEC
+/*=============================================*/
+
+test('DEC $80 decrements ZP$80 (0x6A) to equal 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].DEC_ZP, 80]));
+  cpu.store_byte(0x80, 0x6A);
+  cpu.execute();
+  expect(cpu.read_byte(0x80)).toBe(0x69);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(false);
+});
+/*=============================================*/
+
 /*    LDA
 /*=============================================*/
 
