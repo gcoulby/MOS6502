@@ -839,6 +839,77 @@ test('DEC $2200,X decrements $2202 (0x6A) to equal 0x69 if X==0x02', function ()
 });
 /*=============================================*/
 
+/*    EOR
+/*=============================================*/
+
+test('EOR #$69 performs Exclusive OR on accumulator (0x69) to make 0x00', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.execute();
+  expect(cpu.A).toBe(0x00);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+});
+test('EOR $80 gets #$69 from ZP$80 and performs a Exclusive OR on accumulator (0xE9) to make 0x80', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x69);
+  cpu.A = 0xE9;
+  cpu.execute();
+  expect(cpu.A).toBe(0x80);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(true);
+});
+test('EOR $80,X gets #$68 from $82 performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == $02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ZPX, 0x80]));
+  cpu.store_byte(0x82, 0x69);
+  cpu.A = 0xE9;
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.A).toBe(0x80);
+});
+test('EOR $2200 gets #$69 from $2200 and performs Exclusive OR on accumulator (0xE9) to make 0x80', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x69);
+  cpu.A = 0xE9;
+  cpu.execute();
+  expect(cpu.A).toBe(0x80);
+});
+test('EOR $2200,X gets #$69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if X == #$0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ABSX, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x69);
+  cpu.A = 0xE9;
+  cpu.X = 0x0F;
+  cpu.execute();
+  expect(cpu.A).toBe(0x80);
+});
+test('EOR $2200,Y gets #$69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if Y == #$0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ABSY, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x69);
+  cpu.A = 0xE9;
+  cpu.Y = 0x0F;
+  cpu.execute();
+  expect(cpu.A).toBe(0x80);
+});
+test('EOR ($20,X) gets 0x69 from $3074 and performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == 0x04', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_INDX, 0x20]));
+  cpu.store_byte(0x3074, 0x69);
+  cpu.store_byte(0x24, 0x74);
+  cpu.store_byte(0x25, 0x30);
+  cpu.A = 0xE9;
+  cpu.X = 0x04;
+  cpu.execute();
+  expect(cpu.A).toBe(0x80);
+});
+test('EOR ($0),Y gets 0x69 from $0310 and performs a Exclusive OR on accumulator (0xE9) to make 0x80 if Y == 0x90', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_INDY, 0x00]));
+  cpu.store_byte(0x0310, 0x69);
+  cpu.store_byte(0x00, 0x80);
+  cpu.store_byte(0x01, 0x02);
+  cpu.Y = 0x90;
+  cpu.A = 0xE9;
+  cpu.execute();
+  expect(cpu.A).toBe(0x80);
+});
+/*=============================================*/
+
 /*    LDA
 /*=============================================*/
 

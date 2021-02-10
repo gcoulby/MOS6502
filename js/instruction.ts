@@ -78,6 +78,15 @@ enum Instruction {
     DEX         = 0xCA,
     //DEY - Decrement Y Register
     DEY         = 0x88,
+    //EOR
+    EOR_IM      = 0x49,
+    EOR_ZP      = 0x45,
+    EOR_ZPX     = 0x55,
+    EOR_ABS     = 0x4D,
+    EOR_ABSX    = 0x5D,
+    EOR_ABSY    = 0x59,
+    EOR_INDX    = 0x41,
+    EOR_INDY    = 0x51,
     //INX - Increment X Register
     INX         = 0xE8,
     //INY - Increment X Register

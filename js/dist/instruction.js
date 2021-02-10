@@ -79,6 +79,15 @@ var Instruction;
     Instruction[Instruction["DEX"] = 202] = "DEX";
     //DEY - Decrement Y Register
     Instruction[Instruction["DEY"] = 136] = "DEY";
+    //EOR
+    Instruction[Instruction["EOR_IM"] = 73] = "EOR_IM";
+    Instruction[Instruction["EOR_ZP"] = 69] = "EOR_ZP";
+    Instruction[Instruction["EOR_ZPX"] = 85] = "EOR_ZPX";
+    Instruction[Instruction["EOR_ABS"] = 77] = "EOR_ABS";
+    Instruction[Instruction["EOR_ABSX"] = 93] = "EOR_ABSX";
+    Instruction[Instruction["EOR_ABSY"] = 89] = "EOR_ABSY";
+    Instruction[Instruction["EOR_INDX"] = 65] = "EOR_INDX";
+    Instruction[Instruction["EOR_INDY"] = 81] = "EOR_INDY";
     //INX - Increment X Register
     Instruction[Instruction["INX"] = 232] = "INX";
     //INY - Increment X Register

@@ -319,7 +319,55 @@ class CPU {
                     this.decrement_register(register);
                     this.set_NZ_flags(this[register]);
                     break;
-                //TODO : EOR
+                /*===========*/
+                /*  EOR
+                /*===========*/
+                case instruction_1.default.EOR_IM: // EOR #$80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_immediate();
+                    this.A = this.xor(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.EOR_ZP: // EOR $80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_from_zero_page();
+                    this.A = this.xor(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.EOR_ZPX: // EOR $80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_from_zero_page_add_XY(register_1.default.X);
+                    this.A = this.xor(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.EOR_ABS: // EOR $2200
+                    var byte = this.A;
+                    var byte2 = this.get_byte_absolute();
+                    this.A = this.xor(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.EOR_ABSX: // EOR $2200,Y
+                case instruction_1.default.EOR_ABSY: // EOR $2200,Y
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_absolute_XY(add_register);
+                    this.A = this.xor(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.EOR_INDX: // EOR ($80,X)
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_indexed_indirect_X(add_register);
+                    this.A = this.xor(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.EOR_INDY: // EOR ($80),Y
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_indirect_indexed_Y(add_register);
+                    this.A = this.xor(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
                 //TODO : INC
                 /*===========*/
                 /*  INC|X|Y
@@ -627,6 +675,9 @@ class CPU {
     }
     logical_and(byte1, byte2) {
         return this.intToByte(byte1 & byte2);
+    }
+    xor(byte1, byte2) {
+        return this.intToByte(byte1 ^ byte2);
     }
     bit_test(byte1, byte2) {
         var bit_test = this.logical_and(byte1, byte2) > 0;
