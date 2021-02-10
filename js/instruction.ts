@@ -87,6 +87,11 @@ enum Instruction {
     EOR_ABSY    = 0x59,
     EOR_INDX    = 0x41,
     EOR_INDY    = 0x51,
+    //INC
+    INC_ZP      = 0xE6,
+    INC_ZPX     = 0xF6,
+    INC_ABS     = 0xEE,
+    INC_ABSX    = 0xFE,
     //INX - Increment X Register
     INX         = 0xE8,
     //INY - Increment X Register

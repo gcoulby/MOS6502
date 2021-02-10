@@ -910,6 +910,45 @@ test('EOR ($0),Y gets 0x69 from $0310 and performs a Exclusive OR on accumulator
 });
 /*=============================================*/
 
+/*    INC
+/*=============================================*/
+
+test('INC $80 decrements ZP$80 (0x68) to equal 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].INC_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x68);
+  cpu.execute();
+  expect(cpu.read_byte(0x80)).toBe(0x69);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(false);
+});
+test('INC $80,X decrements ZP$82 (0xFF) to equal 0x00 setting Z flag, if X == 02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].INC_ZPX, 0x80]));
+  cpu.store_byte(0x82, 0xFF);
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.read_byte(0x82)).toBe(0x00);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+});
+test('INC $2200 decrements $2200 (0x) to equal 0xFF setting N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].INC_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x7F);
+  cpu.execute();
+  expect(cpu.read_byte(0x2200)).toBe(0x80);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(false);
+});
+test('INC $2200,X decrements $2202 (0x68) to equal 0x69 if X==0x02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].INC_ABSX, 0x00, 0x22]));
+  cpu.store_byte(0x2202, 0x68);
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.read_byte(0x2202)).toBe(0x69);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(false);
+});
+/*=============================================*/
+
 /*    LDA
 /*=============================================*/
 

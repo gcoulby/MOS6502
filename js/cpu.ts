@@ -362,21 +362,27 @@ class CPU {
                     this.set_NZ_flags(this.A);
                     break;
 
-
-
-
-
-
-
-
-
-
-
                 //TODO : INC
                 /*===========*/
                 /*  INC|X|Y 
                 /*===========*/
                 //TODO : INC
+                case Instruction.INC_ZP: // INC $80
+                    var addr = this.get_zero_page_addr();
+                    this.increment_memory(addr);
+                    break;
+                case Instruction.INC_ZPX: // INC $80,X
+                    var addr = this.get_zero_page_addr_add_XY(Register.X);
+                    this.increment_memory(addr);
+                    break;
+                case Instruction.INC_ABS: // INC $2200
+                    var addr = this.get_absolute_addr();
+                    this.increment_memory(addr);
+                    break;
+                case Instruction.INC_ABSX: // INC $2200,X
+                    var addr = this.get_absolute_addr_add_XY(Register.X);
+                    this.increment_memory(addr);
+                    break;
                 case Instruction.INX: // INX
                 case Instruction.INY: // INY
                     var register = this.get_reg_from_instruction(ins, 2);
@@ -652,6 +658,13 @@ class CPU {
 
     private decrement_memory(addr: number){
         let result = this.intToByte(this.read_byte(addr)-1);
+        this.store_byte(addr, result);
+        this.set_flag(Flag.Z, this.check_if_zero(result));
+        this.set_flag(Flag.N, this.check_if_negative(result));
+    }
+
+    private increment_memory(addr: number){
+        let result = this.intToByte(this.read_byte(addr)+1);
         this.store_byte(addr, result);
         this.set_flag(Flag.Z, this.check_if_zero(result));
         this.set_flag(Flag.N, this.check_if_negative(result));

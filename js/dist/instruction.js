@@ -88,6 +88,11 @@ var Instruction;
     Instruction[Instruction["EOR_ABSY"] = 89] = "EOR_ABSY";
     Instruction[Instruction["EOR_INDX"] = 65] = "EOR_INDX";
     Instruction[Instruction["EOR_INDY"] = 81] = "EOR_INDY";
+    //INC
+    Instruction[Instruction["INC_ZP"] = 230] = "INC_ZP";
+    Instruction[Instruction["INC_ZPX"] = 246] = "INC_ZPX";
+    Instruction[Instruction["INC_ABS"] = 238] = "INC_ABS";
+    Instruction[Instruction["INC_ABSX"] = 254] = "INC_ABSX";
     //INX - Increment X Register
     Instruction[Instruction["INX"] = 232] = "INX";
     //INY - Increment X Register
