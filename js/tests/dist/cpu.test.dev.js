@@ -450,7 +450,7 @@ test('ASL $80 shifts ZP$80 (0x30) left 1 bit doubling the value to 0x60', functi
   cpu.execute();
   expect(cpu.read_byte(0x80)).toBe(0x60);
 });
-test('ASL $80 shifts ZP$82 (0x30) left 1 bit doubling the value to 0x60, if X == 02', function () {
+test('ASL $80,X shifts ZP$82 (0x30) left 1 bit doubling the value to 0x60, if X == 02', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ASL_ZPX, 0x80]));
   cpu.store_byte(0x82, 0x30);
   cpu.X = 0x02;
@@ -611,6 +611,192 @@ test('BVS sets A to 0 because Overflow flag is clear, but X still set to 0x69', 
   cpu.execute();
   expect(cpu.A).toBe(0x0);
   expect(cpu.X).toBe(0x69);
+});
+/*=============================================*/
+
+/*    BIT Test
+/*=============================================*/
+
+test('BIT $80 ANDs A (0x1E) with ZP$80 (0x3E), (both remain unchanged) Zero flag is set, but NV flags are not', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BIT_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x3E);
+  cpu.A = 0x1E;
+  cpu.execute();
+  expect(cpu.A).toBe(0x1E);
+  expect(cpu.read_byte(0x80)).toBe(0x3E);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].V)).toBe(false);
+});
+test('BIT $80 ANDs A (0x1E) with ZP$80 (0x5E), (both remain unchanged) Z and V flags are set, N flag is not', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BIT_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x5E);
+  cpu.A = 0x1E;
+  cpu.execute();
+  expect(cpu.A).toBe(0x1E);
+  expect(cpu.read_byte(0x80)).toBe(0x5E);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].V)).toBe(true);
+});
+test('BIT $80 ANDs A (0x1E) with ZP$80 (0x9E), (both remain unchanged) Z and N flags are set, V flag is not', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BIT_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x9E);
+  cpu.A = 0x1E;
+  cpu.execute();
+  expect(cpu.A).toBe(0x1E);
+  expect(cpu.read_byte(0x80)).toBe(0x9E);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].V)).toBe(false);
+});
+test('BIT $80 ANDs A (0x1E) with $2200 (0xDE), (both remain unchanged) ZNV flags are set', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BIT_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0xDE);
+  cpu.A = 0x1E;
+  cpu.execute();
+  expect(cpu.A).toBe(0x1E);
+  expect(cpu.read_byte(0x2200)).toBe(0xDE);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].V)).toBe(true);
+});
+/*=============================================*/
+
+/*    CMP
+/*=============================================*/
+
+test('CMP #$69 compares accumulator (0x69) with hex 0x69 setting the Z,C flag, but not N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_IM, 0x69]));
+  cpu.A = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CPX #$69 compares X Register (0x69) with hex 0x6F setting the N flag, but not Z,C flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPX_IM, 0x6F]));
+  cpu.X = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(true);
+});
+test('CMP #$69 compares Y Register (0x6F) with hex 0x69 setting the C flag, but not Z,N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPY_IM, 0x69]));
+  cpu.Y = 0x6F;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(false);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CMP $80 compares accumulator (0x69) with hex ZP$80 (0x69) setting the Z,C flag, but not N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x69);
+  cpu.A = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CPX $80 compares X Register (0x69) with hex ZP$80 (0x69) setting the Z,C flag, but not N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPX_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x69);
+  cpu.X = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CPX $80 compares Y Register (0x69) with hex ZP$80 (0x69) setting the Z,C flag, but not N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPY_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x69);
+  cpu.Y = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CMP $80,X compares X Register (0x69) with hex ZP$82 (0x69) setting the Z,C flag, but not N flag if X==0x02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_ZPX, 0x80]));
+  cpu.store_byte(0x82, 0x69);
+  cpu.A = 0x69;
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CMP $2200 compares accumulator (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x69);
+  cpu.A = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CPX $2200 compares X Register (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPX_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x69);
+  cpu.X = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CPX $2200 compares Y Register (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPY_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x69);
+  cpu.Y = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CMP $2200,X compares accumulator (0x69) with hex $2202 (0x69) setting the Z,C flag, but not N flag if X==0x02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_ABSX, 0x00, 0x22]));
+  cpu.store_byte(0x2202, 0x69);
+  cpu.A = 0x69;
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CMP $2200,Y compares accumulator (0x69) with hex $2202 (0x69) setting the Z,C flag, but not N flag if Y==0x02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_ABSY, 0x00, 0x22]));
+  cpu.store_byte(0x2202, 0x69);
+  cpu.A = 0x69;
+  cpu.Y = 0x02;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CMP ($20,X) gets 0x69 from $3074 and compares to accumulator (0x69) setting Z,C Flag but not N flag, if X == 0x04', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_INDX, 0x20]));
+  cpu.store_byte(0x3074, 0x69);
+  cpu.store_byte(0x24, 0x74);
+  cpu.store_byte(0x25, 0x30);
+  cpu.A = 0x69;
+  cpu.X = 0x04;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
+});
+test('CMP ($0),Y gets 0x69 from $0310 and compares to on accumulator (0x69) setting Z,C Flag but not N flag, if Y == 0x90', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].CPA_INDY, 0x00]));
+  cpu.store_byte(0x0310, 0x69);
+  cpu.store_byte(0x00, 0x80);
+  cpu.store_byte(0x01, 0x02);
+  cpu.Y = 0x90;
+  cpu.A = 0x69;
+  cpu.execute();
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(false);
 });
 /*=============================================*/
 

@@ -31,6 +31,8 @@ var Instruction;
     //BEQ - Brach if Equal
     Instruction[Instruction["BEQ"] = 240] = "BEQ";
     //BIT
+    Instruction[Instruction["BIT_ZP"] = 36] = "BIT_ZP";
+    Instruction[Instruction["BIT_ABS"] = 44] = "BIT_ABS";
     //BMI - Branch if Negative
     Instruction[Instruction["BMI"] = 48] = "BMI";
     //BNE - Branch if Not Equal
@@ -51,6 +53,23 @@ var Instruction;
     Instruction[Instruction["CLI"] = 88] = "CLI";
     //CLV - Clear OverflowFlag
     Instruction[Instruction["CLV"] = 184] = "CLV";
+    //CMP - Compare 
+    Instruction[Instruction["CPA_IM"] = 201] = "CPA_IM";
+    Instruction[Instruction["CPA_ZP"] = 197] = "CPA_ZP";
+    Instruction[Instruction["CPA_ZPX"] = 213] = "CPA_ZPX";
+    Instruction[Instruction["CPA_ABS"] = 205] = "CPA_ABS";
+    Instruction[Instruction["CPA_ABSX"] = 221] = "CPA_ABSX";
+    Instruction[Instruction["CPA_ABSY"] = 217] = "CPA_ABSY";
+    Instruction[Instruction["CPA_INDX"] = 193] = "CPA_INDX";
+    Instruction[Instruction["CPA_INDY"] = 209] = "CPA_INDY";
+    //CPX
+    Instruction[Instruction["CPX_IM"] = 224] = "CPX_IM";
+    Instruction[Instruction["CPX_ZP"] = 228] = "CPX_ZP";
+    Instruction[Instruction["CPX_ABS"] = 236] = "CPX_ABS";
+    //CPY
+    Instruction[Instruction["CPY_IM"] = 192] = "CPY_IM";
+    Instruction[Instruction["CPY_ZP"] = 196] = "CPY_ZP";
+    Instruction[Instruction["CPY_ABS"] = 204] = "CPY_ABS";
     //DEX - Decrement X Register
     Instruction[Instruction["DEX"] = 202] = "DEX";
     //DEY - Decrement Y Register

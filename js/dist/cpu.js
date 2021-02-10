@@ -106,21 +106,25 @@ class CPU {
                     var byte = this.A;
                     var byte2 = this.get_byte_immediate();
                     this.A = this.logical_and(byte, byte2);
+                    this.set_NZ_flags(this.A);
                     break;
                 case instruction_1.default.AND_ZP: // AND $80
                     var byte = this.A;
                     var byte2 = this.get_byte_from_zero_page();
                     this.A = this.logical_and(byte, byte2);
+                    this.set_NZ_flags(this.A);
                     break;
                 case instruction_1.default.AND_ZPX: // AND $80
                     var byte = this.A;
                     var byte2 = this.get_byte_from_zero_page_add_XY(register_1.default.X);
                     this.A = this.logical_and(byte, byte2);
+                    this.set_NZ_flags(this.A);
                     break;
                 case instruction_1.default.AND_ABS: // AND $2200
                     var byte = this.A;
                     var byte2 = this.get_byte_absolute();
                     this.A = this.logical_and(byte, byte2);
+                    this.set_NZ_flags(this.A);
                     break;
                 case instruction_1.default.AND_ABSX: // AND $2200,Y
                 case instruction_1.default.AND_ABSY: // AND $2200,Y
@@ -128,18 +132,21 @@ class CPU {
                     var byte = this.A;
                     var byte2 = this.get_byte_absolute_XY(add_register);
                     this.A = this.logical_and(byte, byte2);
+                    this.set_NZ_flags(this.A);
                     break;
                 case instruction_1.default.AND_INDX: // AND ($80,X)
                     var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indexed_indirect_X(add_register);
                     this.A = this.logical_and(byte, byte2);
+                    this.set_NZ_flags(this.A);
                     break;
                 case instruction_1.default.AND_INDY: // AND ($80),Y
                     var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indirect_indexed_Y(add_register);
                     this.A = this.logical_and(byte, byte2);
+                    this.set_NZ_flags(this.A);
                     break;
                 /*===========*/
                 /*  ASL
@@ -185,7 +192,16 @@ class CPU {
                     var zero = this.check_flag(flag_1.default.Z);
                     this.branch_if_true(zero);
                     break;
-                //TODO : BIT
+                case instruction_1.default.BIT_ZP: // BIT $80
+                    var byte1 = this.A;
+                    var byte2 = this.get_byte_from_zero_page();
+                    this.bit_test(byte1, byte2);
+                    break;
+                case instruction_1.default.BIT_ABS: // BIT $80
+                    var byte1 = this.A;
+                    var byte2 = this.get_byte_absolute();
+                    this.bit_test(byte1, byte2);
+                    break;
                 case instruction_1.default.BMI: // BMI 
                     var negative = this.check_flag(flag_1.default.N);
                     this.branch_if_true(negative);
@@ -226,7 +242,58 @@ class CPU {
                 case instruction_1.default.CLV: // CLV
                     this.clear_flag(flag_1.default.V);
                     break;
-                //TODO : CPY
+                /*===========*/
+                /*  CMP|CPX|Y
+                /*===========*/
+                case instruction_1.default.CPA_IM: // CMP #$80
+                case instruction_1.default.CPX_IM: // CPX #$80
+                case instruction_1.default.CPY_IM: // CPY #$80
+                    var register = this.get_reg_from_instruction(ins, 2);
+                    var byte1 = this[register];
+                    var byte2 = this.get_byte_immediate();
+                    this.compare(byte1, byte2);
+                    break;
+                case instruction_1.default.CPA_ZP: // CMP $80
+                case instruction_1.default.CPX_ZP: // CMP $80
+                case instruction_1.default.CPY_ZP: // CMP $80
+                    var register = this.get_reg_from_instruction(ins, 2);
+                    var byte1 = this[register];
+                    var byte2 = this.get_byte_from_zero_page();
+                    this.compare(byte1, byte2);
+                    break;
+                case instruction_1.default.CPA_ZPX: // CMP $80,X
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte1 = this.A;
+                    var byte2 = this.get_byte_from_zero_page_add_XY(add_register);
+                    this.compare(byte1, byte2);
+                    break;
+                case instruction_1.default.CPA_ABS: // CMP $2200
+                case instruction_1.default.CPX_ABS: // CMP $2200
+                case instruction_1.default.CPY_ABS: // CMP $2200
+                    var register = this.get_reg_from_instruction(ins, 2);
+                    var byte1 = this[register];
+                    var byte2 = this.get_byte_absolute();
+                    this.compare(byte1, byte2);
+                    break;
+                case instruction_1.default.CPA_ABSX: // CMP $2200
+                case instruction_1.default.CPA_ABSY: // CMP $2200
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte1 = this.A;
+                    var byte2 = this.get_byte_absolute_XY(add_register);
+                    this.compare(byte1, byte2);
+                    break;
+                case instruction_1.default.CPA_INDX: // CMP ($80,X)
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte1 = this.A;
+                    var byte2 = this.get_byte_indexed_indirect_X(add_register);
+                    this.compare(byte1, byte2);
+                    break;
+                case instruction_1.default.CPA_INDY: // CMP ($80),Y
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte1 = this.A;
+                    var byte2 = this.get_byte_indirect_indexed_Y(add_register);
+                    this.compare(byte1, byte2);
+                    break;
                 /*===========*/
                 /*  DEC|X|Y
                 /*===========*/
@@ -538,9 +605,15 @@ class CPU {
         return result;
     }
     logical_and(byte1, byte2) {
-        let result = this.intToByte(byte1 & byte2);
-        this.set_NZ_flags(result);
-        return result;
+        return this.intToByte(byte1 & byte2);
+    }
+    bit_test(byte1, byte2) {
+        var bit_test = this.logical_and(byte1, byte2) > 0;
+        var negative = this.logical_and(byte2, flag_1.default.N) > 0;
+        var overflow = this.logical_and(byte2, flag_1.default.V) > 0;
+        this.set_flag(flag_1.default.Z, bit_test);
+        this.set_flag(flag_1.default.N, negative);
+        this.set_flag(flag_1.default.V, overflow);
     }
     shift_left(byte) {
         let carryCheck = this.check_if_negative(byte);
@@ -548,6 +621,12 @@ class CPU {
         let result = this.intToByte(byte << 1);
         this.set_NZ_flags(result);
         return result;
+    }
+    compare(byte1, byte2) {
+        let result = byte1 - byte2;
+        this.set_flag(flag_1.default.C, result >= 0);
+        this.set_flag(flag_1.default.Z, result == 0);
+        this.set_flag(flag_1.default.N, result < 0);
     }
     /*================================================*/
     /*            Relative Instructions

@@ -30,6 +30,8 @@ enum Instruction {
     //BEQ - Brach if Equal
     BEQ         = 0xF0,
     //BIT
+    BIT_ZP      = 0x24,
+    BIT_ABS     = 0x2C,
     //BMI - Branch if Negative
     BMI         = 0x30,
     //BNE - Branch if Not Equal
@@ -50,6 +52,23 @@ enum Instruction {
     CLI         = 0x58,
     //CLV - Clear OverflowFlag
     CLV         = 0xB8,
+    //CMP - Compare 
+    CPA_IM      = 0xC9,
+    CPA_ZP      = 0xC5,
+    CPA_ZPX     = 0xD5,
+    CPA_ABS     = 0xCD,
+    CPA_ABSX    = 0xDD,
+    CPA_ABSY    = 0xD9,
+    CPA_INDX    = 0xC1,
+    CPA_INDY    = 0xD1,
+    //CPX
+    CPX_IM      = 0xE0,
+    CPX_ZP      = 0xE4,
+    CPX_ABS     = 0xEC,
+    //CPY
+    CPY_IM      = 0xC0,
+    CPY_ZP      = 0xC4,
+    CPY_ABS     = 0xCC,
     //DEX - Decrement X Register
     DEX         = 0xCA,
     //DEY - Decrement Y Register
