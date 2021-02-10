@@ -297,19 +297,22 @@ class CPU {
                 /*===========*/
                 /*  DEC|X|Y
                 /*===========*/
-                //TODO : DEC
                 case instruction_1.default.DEC_ZP: // DEC $80
                     var addr = this.get_zero_page_addr();
                     this.decrement_memory(addr);
+                    break;
                 case instruction_1.default.DEC_ZPX: // DEC $80,X
                     var addr = this.get_zero_page_addr_add_XY(register_1.default.X);
                     this.decrement_memory(addr);
+                    break;
                 case instruction_1.default.DEC_ABS: // DEC $2200
                     var addr = this.get_absolute_addr();
                     this.decrement_memory(addr);
+                    break;
                 case instruction_1.default.DEC_ABSX: // DEC $2200,X
                     var addr = this.get_absolute_addr_add_XY(register_1.default.X);
                     this.decrement_memory(addr);
+                    break;
                 case instruction_1.default.DEX: // DEX
                 case instruction_1.default.DEY: // DEY
                     var register = this.get_reg_from_instruction(ins, 2);
@@ -574,7 +577,10 @@ class CPU {
         this[register]++;
     }
     decrement_memory(addr) {
-        this.store_byte(addr, this.intToByte(this.read_byte(addr) - 1));
+        let result = this.intToByte(this.read_byte(addr) - 1);
+        this.store_byte(addr, result);
+        this.set_flag(flag_1.default.Z, this.check_if_zero(result));
+        this.set_flag(flag_1.default.N, this.check_if_negative(result));
     }
     no_operation() {
         this.increment_register(register_1.default.PC);

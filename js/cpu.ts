@@ -290,19 +290,22 @@ class CPU {
                 /*===========*/
                 /*  DEC|X|Y 
                 /*===========*/
-                //TODO : DEC
                 case Instruction.DEC_ZP: // DEC $80
                     var addr = this.get_zero_page_addr();
                     this.decrement_memory(addr);
+                    break;
                 case Instruction.DEC_ZPX: // DEC $80,X
                     var addr = this.get_zero_page_addr_add_XY(Register.X);
                     this.decrement_memory(addr);
+                    break;
                 case Instruction.DEC_ABS: // DEC $2200
                     var addr = this.get_absolute_addr();
                     this.decrement_memory(addr);
+                    break;
                 case Instruction.DEC_ABSX: // DEC $2200,X
                     var addr = this.get_absolute_addr_add_XY(Register.X);
                     this.decrement_memory(addr);
+                    break;
                 case Instruction.DEX: // DEX
                 case Instruction.DEY: // DEY
                     var register = this.get_reg_from_instruction(ins, 2);
@@ -589,7 +592,10 @@ class CPU {
     }
 
     private decrement_memory(addr: number){
-        this.store_byte(addr, this.intToByte(this.read_byte(addr)-1));
+        let result = this.intToByte(this.read_byte(addr)-1);
+        this.store_byte(addr, result);
+        this.set_flag(Flag.Z, this.check_if_zero(result));
+        this.set_flag(Flag.N, this.check_if_negative(result));
     }
     
     private no_operation(){

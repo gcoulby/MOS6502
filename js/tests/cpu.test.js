@@ -875,10 +875,39 @@ test('CMP ($0),Y gets 0x69 from $0310 and compares to on accumulator (0x69) sett
 /*=============================================*/
 
 test('DEC $80 decrements ZP$80 (0x6A) to equal 0x69', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.DEC_ZP, 80]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.DEC_ZP, 0x80]));
     cpu.store_byte(0x80, 0x6A);
     cpu.execute();
     expect(cpu.read_byte(0x80)).toBe(0x69);
+    expect(cpu.check_flag(Flag.N)).toBe(false);
+    expect(cpu.check_flag(Flag.Z)).toBe(false);
+});
+
+test('DEC $80,X decrements ZP$82 (0x01) to equal 0x00 setting Z flag, if X == 02', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.DEC_ZPX, 0x80]));
+    cpu.store_byte(0x82, 0x01);
+    cpu.X = 0x02;
+    cpu.execute();
+    expect(cpu.read_byte(0x82)).toBe(0x00);
+    expect(cpu.check_flag(Flag.N)).toBe(false);
+    expect(cpu.check_flag(Flag.Z)).toBe(true);
+});
+
+test('DEC $2200 decrements $2200 (0x00) to equal 0xFF setting N flag', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.DEC_ABS, 0x00, 0x22]));
+    cpu.store_byte(0x2200, 0x00);
+    cpu.execute();
+    expect(cpu.read_byte(0x2200)).toBe(0xFF);
+    expect(cpu.check_flag(Flag.N)).toBe(true);
+    expect(cpu.check_flag(Flag.Z)).toBe(false);
+});
+
+test('DEC $2200,X decrements $2202 (0x6A) to equal 0x69 if X==0x02', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.DEC_ABSX, 0x00, 0x22]));
+    cpu.store_byte(0x2202, 0x6A);
+    cpu.X = 0x02;
+    cpu.execute();
+    expect(cpu.read_byte(0x2202)).toBe(0x69);
     expect(cpu.check_flag(Flag.N)).toBe(false);
     expect(cpu.check_flag(Flag.Z)).toBe(false);
 });
