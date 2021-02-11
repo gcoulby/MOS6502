@@ -75,12 +75,6 @@ test('Incrementing 16bit registers from 0xFF == 0x100', () => {
     expect(cpu.PC).toBe(0x100);
 });
 
-test('Program loaded into memory at the correct address', () => {
-    let cpu = get_CPU(0x0000, new Uint8Array([]), true);
-    expect(true).toBe(true);
-});
-
-
 /*=============================================*/
 /*    Flags
 /*=============================================*/
@@ -473,7 +467,7 @@ test('ASL A shifts accumulator (0x30) left 1 bit doubling the value to 0x60, C F
     expect(cpu.check_flag(Flag.C)).toBe(false);
 });
 
-test('ASL A shifts accumulator (0x128) left 1 bit setting the C flag and resulting in 0x00', () => {
+test('ASL A shifts accumulator (0x80) left 1 bit setting the C flag and resulting in 0x00', () => {
     let cpu = get_CPU(0xF000, new Uint8Array([Instruction.ASL_A]));
     cpu.A = 0x80;
     cpu.execute();
@@ -1088,12 +1082,8 @@ test('RTS pulls the PC+1 from the stack and returns', () => {
     cpu.execute();
     expect(cpu.A).toBe(0x00);
     expect(cpu.X).toBe(0x69);
-    console.log(cpu.debug_stack);
     let byte_check = [Instruction.JSR, 0x00, 0x22, Instruction.LDX_IM, 0x69, Instruction.RTS, Instruction.LDA_IM, 0x00];
     expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check)
-    let low_order = cpu.pull_from_stack();
-    let high_order = cpu.pull_from_stack() << 8;
-    let pc = cpu.intToWord(high_order + low_order);
 });
 
 
@@ -1254,6 +1244,56 @@ test('LDY $2200,X Loads 0x69 from $220F into Y Register if X register is $0F', (
     cpu.X = 0x0F;
     cpu.execute();
     expect(cpu.Y).toBe(0x69);
+});
+
+/*=============================================*/
+/*    LSR
+/*=============================================*/
+
+test('LSR A shifts accumulator (0x30) right 1 bit doubling the value to 0x18, C Flag not set', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LSR_A]));
+    cpu.A = 0x30;
+    cpu.execute();
+    expect(cpu.A).toBe(0x18);
+    expect(cpu.check_flag(Flag.C)).toBe(false);
+});
+
+test('LSR A shifts accumulator (0x01) right 1 bit setting the C flag and resulting in 0x00', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LSR_A]));
+    cpu.A = 0x01;
+    cpu.execute();
+    expect(cpu.A).toBe(0x00);
+    expect(cpu.check_flag(Flag.C)).toBe(true);
+});
+
+test('LSR $80 shifts ZP$80 (0x30) right 1 bit doubling the value to 0x60', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LSR_ZP, 0x80]));
+    cpu.store_byte(0x80, 0x30);
+    cpu.execute();
+    expect(cpu.read_byte(0x80)).toBe(0x18);
+});
+
+test('LSR $80,X shifts ZP$82 (0x30) right 1 bit doubling the value to 0x60, if X == 02', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LSR_ZPX, 0x80]));
+    cpu.store_byte(0x82, 0x30);
+    cpu.X = 0x02;
+    cpu.execute();
+    expect(cpu.read_byte(0x82)).toBe(0x18);
+});
+
+test('LSR $2200 shifts $2200 (0x30) right 1 bit doubling the value to 0x60', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LSR_ABS, 0x00, 0x22]));
+    cpu.store_byte(0x2200, 0x30);
+    cpu.execute();
+    expect(cpu.read_byte(0x2200)).toBe(0x18);
+});
+
+test('LSR $2200,X shifts $220F (0x30) right 1 bit doubling the value to 0x60 if X == 0F', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LSR_ABSX, 0x00, 0x22]));
+    cpu.store_byte(0x220F, 0x30);
+    cpu.X = 0x0F;
+    cpu.execute();
+    expect(cpu.read_byte(0x220F)).toBe(0x18);
 });
 
 

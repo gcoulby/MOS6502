@@ -182,6 +182,9 @@ class CPU {
                     var shift = this.shift_left(byte);
                     this.store_byte(abs_addr, shift);
                     break;
+                /*===========*/
+                /*  Branching
+                /*===========*/
                 case Instruction.BCC: // BCC 
                     var carry_clear = !this.check_flag(Flag.C);
                     this.branch_if_true(carry_clear);
@@ -478,6 +481,38 @@ class CPU {
                     break;
                 //TODO : LSR
                 /*===========*/
+                /*  LSR
+                /*===========*/
+                case Instruction.LSR_A: // LSR A
+                    this.A = this.shift_right(this.A);
+                    break;
+                case Instruction.LSR_ZP: // LSR $80
+                    var zp_addr = this.read_byte(this.PC);
+                    var byte = this.get_byte_from_zero_page();
+                    var shift = this.shift_right(byte);
+                    this.store_byte(zp_addr, shift);
+                    break;
+                case Instruction.LSR_ZPX: // LSR $80,X
+                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var zp_addr = this.intToByte(this.read_byte(this.PC) + this.X);
+                    var byte = this.get_byte_from_zero_page_add_XY(add_register);
+                    var shift = this.shift_right(byte);
+                    this.store_byte(zp_addr, shift);
+                    break;
+                case Instruction.LSR_ABS: // LSR $2200
+                    var abs_addr = this.read_word(this.PC);
+                    var byte = this.get_byte_absolute();
+                    var shift = this.shift_right(byte);
+                    this.store_byte(abs_addr, shift);
+                    break;
+                case Instruction.LSR_ABSX: // LSR $2200,X
+                    var add_register = this.get_reg_from_instruction(ins, -1);  
+                    var abs_addr = this.intToWord(this.read_word(this.PC) + this.X);
+                    var byte = this.get_byte_absolute_XY(add_register);
+                    var shift = this.shift_right(byte);
+                    this.store_byte(abs_addr, shift);
+                    break;
+                /*===========*/
                 /*  NOP     
                 /*===========*/
                 case Instruction.NOP: // NOP
@@ -502,13 +537,11 @@ class CPU {
                 //TODO : ROL
                 //TODO : ROR
                 //TODO : RTI
-                //TODO : RTS
                 case Instruction.RTS:
-                    console.log("dddd");
                     var low_order = this.pull_from_stack();
                     var high_order = this.pull_from_stack() << 8;
                     this.PC = this.intToWord(high_order + low_order + 1);
-                    break;// TODO: Test RTS
+                    break;
                 //TODO : SBC
                 case Instruction.SEC: // SEC
                     this.set_flag(Flag.C);
@@ -774,6 +807,14 @@ class CPU {
         let carryCheck = this.check_if_negative(byte)
         this.set_flag(Flag.C, carryCheck);
         let result = this.intToByte(byte << 1);
+        this.set_NZ_flags(result);
+        return result;
+    }
+
+    private shift_right(byte:number){
+        let carryCheck = (byte & 0x01) > 0;
+        this.set_flag(Flag.C, carryCheck);
+        let result = this.intToByte(byte >> 1);
         this.set_NZ_flags(result);
         return result;
     }

@@ -123,6 +123,12 @@ var Instruction;
     Instruction[Instruction["LDY_ZPX"] = 180] = "LDY_ZPX";
     Instruction[Instruction["LDY_ABS"] = 172] = "LDY_ABS";
     Instruction[Instruction["LDY_ABSX"] = 188] = "LDY_ABSX";
+    //LSR - Logical Shift Right
+    Instruction[Instruction["LSR_A"] = 74] = "LSR_A";
+    Instruction[Instruction["LSR_ZP"] = 70] = "LSR_ZP";
+    Instruction[Instruction["LSR_ZPX"] = 86] = "LSR_ZPX";
+    Instruction[Instruction["LSR_ABS"] = 78] = "LSR_ABS";
+    Instruction[Instruction["LSR_ABSX"] = 94] = "LSR_ABSX";
     //NOP - No Operation
     Instruction[Instruction["NOP"] = 234] = "NOP";
     //PHA - Push Accumulator to Stack

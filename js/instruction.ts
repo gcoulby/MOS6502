@@ -122,7 +122,12 @@ enum Instruction {
     LDY_ZPX     = 0xB4,
     LDY_ABS     = 0xAC,
     LDY_ABSX    = 0xBC,
-    
+    //LSR - Logical Shift Right
+    LSR_A       = 0x4A,
+    LSR_ZP      = 0x46,
+    LSR_ZPX     = 0x56,
+    LSR_ABS     = 0x4E,
+    LSR_ABSX    = 0x5E,
     //NOP - No Operation
     NOP         = 0xEA,
     //PHA - Push Accumulator to Stack
