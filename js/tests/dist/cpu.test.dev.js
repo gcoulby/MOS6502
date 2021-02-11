@@ -1145,7 +1145,7 @@ test('LDY $2200,X Loads 0x69 from $220F into Y Register if X register is $0F', f
 /*    LSR
 /*=============================================*/
 
-test('LSR A shifts accumulator (0x30) right 1 bit doubling the value to 0x18, C Flag not set', function () {
+test('LSR A shifts accumulator (0x30) right 1 bit halving the value to 0x18, C Flag not set', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].LSR_A]));
   cpu.A = 0x30;
   cpu.execute();
@@ -1159,27 +1159,188 @@ test('LSR A shifts accumulator (0x01) right 1 bit setting the C flag and resulti
   expect(cpu.A).toBe(0x00);
   expect(cpu.check_flag(_flag["default"].C)).toBe(true);
 });
-test('LSR $80 shifts ZP$80 (0x30) right 1 bit doubling the value to 0x60', function () {
+test('LSR $80 shifts ZP$80 (0x30) right 1 bit halving the value to 0x60', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].LSR_ZP, 0x80]));
   cpu.store_byte(0x80, 0x30);
   cpu.execute();
   expect(cpu.read_byte(0x80)).toBe(0x18);
 });
-test('LSR $80,X shifts ZP$82 (0x30) right 1 bit doubling the value to 0x60, if X == 02', function () {
+test('LSR $80,X shifts ZP$82 (0x30) right 1 bit halving the value to 0x60, if X == 02', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].LSR_ZPX, 0x80]));
   cpu.store_byte(0x82, 0x30);
   cpu.X = 0x02;
   cpu.execute();
   expect(cpu.read_byte(0x82)).toBe(0x18);
 });
-test('LSR $2200 shifts $2200 (0x30) right 1 bit doubling the value to 0x60', function () {
+test('LSR $2200 shifts $2200 (0x30) right 1 bit halving the value to 0x60', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].LSR_ABS, 0x00, 0x22]));
   cpu.store_byte(0x2200, 0x30);
   cpu.execute();
   expect(cpu.read_byte(0x2200)).toBe(0x18);
 });
-test('LSR $2200,X shifts $220F (0x30) right 1 bit doubling the value to 0x60 if X == 0F', function () {
+test('LSR $2200,X shifts $220F (0x30) right 1 bit halving the value to 0x60 if X == 0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].LSR_ABSX, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x30);
+  cpu.X = 0x0F;
+  cpu.execute();
+  expect(cpu.read_byte(0x220F)).toBe(0x18);
+});
+/*=============================================*/
+
+/*    ORA
+/*=============================================*/
+
+test('ORA #$69 performs logical ORA on accumulator (0x29) to make 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_IM, 0x69]));
+  cpu.A = 0x29;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('ORA $80 gets #$69 from ZP$80 and performs a logical ORA on accumulator (0x29) to make 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x69);
+  cpu.A = 0x29;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('ORA $80,X gets #$68 from $82 performs a logical ORA on accumulator (0x29) to make 0x69 if X == $02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ZPX, 0x80]));
+  cpu.store_byte(0x82, 0x69);
+  cpu.A = 0x29;
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('ORA $2200 gets #$69 from $2200 and performs logical ORA on accumulator (0x29) to make 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x69);
+  cpu.A = 0x29;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('ORA $2200,X gets #$69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if X == #$0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ABSX, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x69);
+  cpu.A = 0x29;
+  cpu.X = 0x0F;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('ORA $2200,Y gets #$69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if Y == #$0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ABSY, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x69);
+  cpu.A = 0x29;
+  cpu.Y = 0x0F;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('ORA ($20,X) gets 0x69 from $3074 and performs a logical ORA on accumulator (0x29) to make 0x69 if X == 0x04', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_INDX, 0x20]));
+  cpu.store_byte(0x3074, 0x69);
+  cpu.store_byte(0x24, 0x74);
+  cpu.store_byte(0x25, 0x30);
+  cpu.A = 0x29;
+  cpu.X = 0x04;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('ORA ($0),Y gets 0x69 from $0310 and performs a logical ORA on accumulator (0x29) to make 0x69 if Y == 0x90', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_INDY, 0x00]));
+  cpu.store_byte(0x0310, 0x69);
+  cpu.store_byte(0x00, 0x80);
+  cpu.store_byte(0x01, 0x02);
+  cpu.Y = 0x90;
+  cpu.A = 0x29;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+/*=============================================*/
+
+/*    ROL
+/*=============================================*/
+
+test('ROL A shifts accumulator (0x30) left 1 bit doubling the value to 0x60, then setting bit 0 to old Carry flag, C Flag not set', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROL_A]));
+  cpu.set_flag(_flag["default"].C);
+  cpu.A = 0x30;
+  cpu.execute();
+  expect(cpu.A).toBe(0x61);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(false);
+});
+test('ROL A shifts accumulator (0x80) right 1 bit setting the C flag and resulting in 0x00', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROL_A]));
+  cpu.A = 0x80;
+  cpu.execute();
+  expect(cpu.A).toBe(0x00);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+});
+test('ROL $80 shifts ZP$80 (0x30) right 1 bit doubling the value to 0x60', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROL_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x30);
+  cpu.execute();
+  expect(cpu.read_byte(0x80)).toBe(0x60);
+});
+test('ROL $80,X shifts ZP$82 (0x30) right 1 bit doubling the value to 0x60, if X == 02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROL_ZPX, 0x80]));
+  cpu.store_byte(0x82, 0x30);
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.read_byte(0x82)).toBe(0x60);
+});
+test('ROL $2200 shifts $2200 (0x30) right 1 bit doubling the value to 0x60', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROL_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x30);
+  cpu.execute();
+  expect(cpu.read_byte(0x2200)).toBe(0x60);
+});
+test('ROL $2200,X shifts $220F (0x30) right 1 bit doubling the value to 0x60 if X == 0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROL_ABSX, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x30);
+  cpu.X = 0x0F;
+  cpu.execute();
+  expect(cpu.read_byte(0x220F)).toBe(0x60);
+});
+/*=============================================*/
+
+/*    ROR
+/*=============================================*/
+
+test('ROR A shifts accumulator (0x30) right 1 bit halving the value to 0x18, C Flag not set', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROR_A]));
+  cpu.set_flag(_flag["default"].C);
+  cpu.A = 0x30;
+  cpu.execute();
+  expect(cpu.A).toBe(0x19);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(false);
+});
+test('ROR A shifts accumulator (0x01) right 1 bit setting the C flag and resulting in 0x00', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROR_A]));
+  cpu.A = 0x01;
+  cpu.execute();
+  expect(cpu.A).toBe(0x00);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+});
+test('ROR $80 shifts ZP$80 (0x30) right 1 bit halving the value to 0x60', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROR_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x30);
+  cpu.execute();
+  expect(cpu.read_byte(0x80)).toBe(0x18);
+});
+test('ROR $80,X shifts ZP$82 (0x30) right 1 bit halving the value to 0x60, if X == 02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROR_ZPX, 0x80]));
+  cpu.store_byte(0x82, 0x30);
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.read_byte(0x82)).toBe(0x18);
+});
+test('ROR $2200 shifts $2200 (0x30) right 1 bit halving the value to 0x60', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROR_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x30);
+  cpu.execute();
+  expect(cpu.read_byte(0x2200)).toBe(0x18);
+});
+test('ROR $2200,X shifts $220F (0x30) right 1 bit halving the value to 0x60 if X == 0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ROR_ABSX, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x30);
   cpu.X = 0x0F;
   cpu.execute();

@@ -22,7 +22,7 @@ enum Instruction {
     ASL_ZP      = 0x06,
     ASL_ZPX     = 0x16,
     ASL_ABS     = 0x0E,
-    ASL_ABSX    = 0x1D,
+    ASL_ABSX    = 0x1E,
     //BCC - Brach if Carry Clear
     BCC         = 0x90,
     //BCS - Brach if Carry Set
@@ -130,6 +130,15 @@ enum Instruction {
     LSR_ABSX    = 0x5E,
     //NOP - No Operation
     NOP         = 0xEA,
+    //ORA - Logical ORA
+    ORA_IM      = 0x09,
+    ORA_ZP      = 0x05,
+    ORA_ZPX     = 0x15,
+    ORA_ABS     = 0x0D,
+    ORA_ABSX    = 0x1D,
+    ORA_ABSY    = 0x19,
+    ORA_INDX    = 0x01,
+    ORA_INDY    = 0x11,
     //PHA - Push Accumulator to Stack
     PHA         = 0x48,
     //PHA - Push Accumulator to Stack
@@ -140,6 +149,18 @@ enum Instruction {
     PLP         = 0x28,
     //RTS - Return from Subroutine
     RTS         = 0x60,
+    //ROL - Rotate Left
+    ROL_A       = 0x2A,
+    ROL_ZP      = 0x26,
+    ROL_ZPX     = 0x36,
+    ROL_ABS     = 0x2E,
+    ROL_ABSX    = 0x3E,
+    //ROR - Rotate Left
+    ROR_A       = 0x6A,
+    ROR_ZP      = 0x66,
+    ROR_ZPX     = 0x76,
+    ROR_ABS     = 0x6E,
+    ROR_ABSX    = 0x7E,
     //SEC - Set Carry Flag
     SEC         = 0x38,
     //SEC - Set Decimal Flag

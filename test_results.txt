@@ -1,24 +1,24 @@
 PASS js/tests/cpu.test.js
-  √ Memory is after instantiation 64kb (4 ms)
-  √ Memory at 0xFF == 0x69 after storing value (2 ms)
-  √ Return $80, $0F as little endian word ($0F80) (2 ms)
+  √ Memory is after instantiation 64kb (5 ms)
+  √ Memory at 0xFF == 0x69 after storing value (1 ms)
+  √ Return $80, $0F as little endian word ($0F80) (3 ms)
   √ Program loaded into memory at the correct address (1 ms)
-  √ Incrementing 8bit registers from 0xFF == 0x00 (1 ms)
-  √ Incrementing 16bit registers from 0xFF == 0x100
-  √ N flag is set when value >= 128 (9 ms)
-  √ N flag is not set when value < 128 (20 ms)
-  √ V flag is set for $F0 + $20
-  √ V flag is not set for $F0 + $04 (1 ms)
-  √ Z flag is set when value == 0 (1 ms)
+  √ Incrementing 8bit registers from 0xFF == 0x00
+  √ Incrementing 16bit registers from 0xFF == 0x100 (1 ms)
+  √ N flag is set when value >= 128 (14 ms)
+  √ N flag is not set when value < 128 (13 ms)
+  √ V flag is set for $F0 + $20 (1 ms)
+  √ V flag is not set for $F0 + $04
+  √ Z flag is set when value == 0
   √ Z flag is not set when value > 0 (12 ms)
   √ flags set by on/off commands can be set on with true
-  √ flags set by on/off commands can be set off with false (1 ms)
+  √ flags set by on/off commands can be set off with false
   √ C flag is set for $F0 + $20 or for $10 - $20
-  √ C flag is set for $10 - $20 (1 ms)
-  √ C flag is not set for $F0 + $04
-  √ C flag is not set for $F4 - $04 (1 ms)
-  √ NOP has no effect to the CPU (2 ms)
-  √ CLC clears the Carry flag (1 ms)
+  √ C flag is set for $10 - $20
+  √ C flag is not set for $F0 + $04 (1 ms)
+  √ C flag is not set for $F4 - $04
+  √ NOP has no effect to the CPU (3 ms)
+  √ CLC clears the Carry flag
   √ CLD clears the Decimal Mode flag
   √ CLI clears the Interrupt disable flag
   √ CLV clears the overflow flag (1 ms)
@@ -30,14 +30,14 @@ PASS js/tests/cpu.test.js
   √ PHP pushes the Processor status the stack and decrements the stack pointer (1 ms)
   √ PLA pulls $69 from the stack, sets accumulator and decrements the stack pointer
   √ PLP pulls Processor status from the stack, sets the P Register and decrements the stack pointer (1 ms)
-  √ ADC #$68 Adds to accumulator (#$01) to make 0x69 adding the carry, unsetting C flag once consumed
-  √ ADC #$68 Adds to accumulator (#$FE) to make 0x69 adding the carry, resetting C flag (1 ms)
+  √ ADC #$68 Adds to accumulator (#$01) to make 0x69 adding the carry, unsetting C flag once consumed (1 ms)
+  √ ADC #$68 Adds to accumulator (#$FE) to make 0x69 adding the carry, resetting C flag
   √ ADC $80 gets #$68 from ZP$80 and adds to accumulator (#$01) to make 0x69
   √ ADC $80,X gets #$68 from $82 and adds to accumulator (#$01) to make 0x69 if X == $02
-  √ ADC $2200 gets #$69 from $2200 and adds to accumulator (#$01) to make 0x69 (1 ms)
-  √ ADC $2200,X gets #$69 from $220F and adds to accumulator (#$01) to make 0x69 if X == #$0F
-  √ ADC $2200,Y gets #$69 from $220F and adds to accumulator (#$01) to make 0x69 if Y == #$0F (1 ms)
-  √ ADC ($20,X) gets 0x68 from $3074 and adds to accumulator (#$01) to make 0x69 if X == 0x04
+  √ ADC $2200 gets #$69 from $2200 and adds to accumulator (#$01) to make 0x69
+  √ ADC $2200,X gets #$69 from $220F and adds to accumulator (#$01) to make 0x69 if X == #$0F (1 ms)
+  √ ADC $2200,Y gets #$69 from $220F and adds to accumulator (#$01) to make 0x69 if Y == #$0F
+  √ ADC ($20,X) gets 0x68 from $3074 and adds to accumulator (#$01) to make 0x69 if X == 0x04 (1 ms)
   √ ADC ($0),Y gets 0x68 from $0310 and adds to accumulator (#$01) to make 0x69 if Y == 0x90
   √ AND #$69 performs logical AND on accumulator (0xE9) to make 0x69 (1 ms)
   √ AND $80 gets #$69 from ZP$80 and performs a logical AND on accumulator (0xE9) to make 0x69
@@ -47,91 +47,111 @@ PASS js/tests/cpu.test.js
   √ AND $2200,Y gets #$69 from $220F and performs logical AND on accumulator (0xE9) to make 0x69 if Y == #$0F (1 ms)
   √ AND ($20,X) gets 0x69 from $3074 and performs a logical AND on accumulator (0xE9) to make 0x69 if X == 0x04
   √ AND ($0),Y gets 0x69 from $0310 and performs a logical AND on accumulator (0xE9) to make 0x69 if Y == 0x90 (1 ms)
-  √ ASL A shifts accumulator (0x30) left 1 bit doubling the value to 0x60, C Flag not set
-  √ ASL A shifts accumulator (0x80) left 1 bit setting the C flag and resulting in 0x00 (1 ms)
-  √ ASL $80 shifts ZP$80 (0x30) left 1 bit doubling the value to 0x60
+  √ ASL A shifts accumulator (0x30) left 1 bit doubling the value to 0x60, C Flag not set (1 ms)
+  √ ASL A shifts accumulator (0x80) left 1 bit setting the C flag and resulting in 0x00
+  √ ASL $80 shifts ZP$80 (0x30) left 1 bit doubling the value to 0x60 (1 ms)
   √ ASL $80,X shifts ZP$82 (0x30) left 1 bit doubling the value to 0x60, if X == 02
-  √ ASL $2200 shifts $2200 (0x30) left 1 bit doubling the value to 0x60 (1 ms)
+  √ ASL $2200 shifts $2200 (0x30) left 1 bit doubling the value to 0x60
   √ ASL $2200,X shifts $220F (0x30) left 1 bit doubling the value to 0x60 if X == 0F
-  √ BCC skips setting A to 0 because Carry is clear, but X still set to 0x69 (1 ms)
-  √ BCC sets A to 0 because Carry is not clear, but X still set to 0x69
-  √ BCS skips setting A to 0 because Carry is set, but X still set to 0x69 (1 ms)
-  √ BCS sets A to 0 because Carry is clear, but X still set to 0x69
-  √ BEQ skips setting A to 0 because Zero flag is set, but X still set to 0x69 (1 ms)
-  √ BEQ sets A to 0 because Zero flag clear, but X still set to 0x69
+  √ BCC skips setting A to 0 because Carry is clear, but X still set to 0x69
+  √ BCC sets A to 0 because Carry is not clear, but X still set to 0x69 (1 ms)
+  √ BCS skips setting A to 0 because Carry is set, but X still set to 0x69
+  √ BCS sets A to 0 because Carry is clear, but X still set to 0x69 (1 ms)
+  √ BEQ skips setting A to 0 because Zero flag is set, but X still set to 0x69
+  √ BEQ sets A to 0 because Zero flag clear, but X still set to 0x69 (1 ms)
   √ BMI skips setting A to 0 because Negative flag is set, but X still set to 0x69 (1 ms)
   √ BMI sets A to 0 because Negative flag clear, but X still set to 0x69
-  √ BNE skips setting A to 0 because Zero flag is clear, but X still set to 0x69
-  √ BNE sets A to 0 because Zero flag set, but X still set to 0x69 (1 ms)
-  √ BPL skips setting A to 0 because Negative flag is clear, but X still set to 0x69
-  √ BPL sets A to 0 because Negative flag is set, but X still set to 0x69 (1 ms)
-  √ BVC skips setting A to 0 because Overflow flag clear, but X still set to 0x69 (1 ms)
-  √ BVC sets A to 0 because Overflow flag is set, but X still set to 0x69 (1 ms)
+  √ BNE skips setting A to 0 because Zero flag is clear, but X still set to 0x69 (1 ms)
+  √ BNE sets A to 0 because Zero flag set, but X still set to 0x69
+  √ BPL skips setting A to 0 because Negative flag is clear, but X still set to 0x69 (1 ms)
+  √ BPL sets A to 0 because Negative flag is set, but X still set to 0x69
+  √ BVC skips setting A to 0 because Overflow flag clear, but X still set to 0x69
+  √ BVC sets A to 0 because Overflow flag is set, but X still set to 0x69
   √ BVS skips setting A to 0 because Overflow flag is set, but X still set to 0x69
-  √ BVS sets A to 0 because Overflow flag is clear, but X still set to 0x69
+  √ BVS sets A to 0 because Overflow flag is clear, but X still set to 0x69 (1 ms)
   √ BIT $80 ANDs A (0x1E) with ZP$80 (0x3E), (both remain unchanged) Zero flag is set, but NV flags are not
   √ BIT $80 ANDs A (0x1E) with ZP$80 (0x5E), (both remain unchanged) Z and V flags are set, N flag is not (1 ms)
   √ BIT $80 ANDs A (0x1E) with ZP$80 (0x9E), (both remain unchanged) Z and N flags are set, V flag is not
-  √ BIT $80 ANDs A (0x1E) with $2200 (0xDE), (both remain unchanged) ZNV flags are set (1 ms)
-  √ CMP #$69 compares accumulator (0x69) with hex 0x69 setting the Z,C flag, but not N flag
-  √ CPX #$69 compares X Register (0x69) with hex 0x6F setting the N flag, but not Z,C flag (1 ms)
+  √ BIT $80 ANDs A (0x1E) with $2200 (0xDE), (both remain unchanged) ZNV flags are set
+  √ CMP #$69 compares accumulator (0x69) with hex 0x69 setting the Z,C flag, but not N flag (1 ms)
+  √ CPX #$69 compares X Register (0x69) with hex 0x6F setting the N flag, but not Z,C flag
   √ CMP #$69 compares Y Register (0x6F) with hex 0x69 setting the C flag, but not Z,N flag
   √ CMP $80 compares accumulator (0x69) with hex ZP$80 (0x69) setting the Z,C flag, but not N flag (1 ms)
   √ CPX $80 compares X Register (0x69) with hex ZP$80 (0x69) setting the Z,C flag, but not N flag
   √ CPX $80 compares Y Register (0x69) with hex ZP$80 (0x69) setting the Z,C flag, but not N flag (1 ms)
   √ CMP $80,X compares X Register (0x69) with hex ZP$82 (0x69) setting the Z,C flag, but not N flag if X==0x02
-  √ CMP $2200 compares accumulator (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag
-  √ CPX $2200 compares X Register (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag (1 ms)
-  √ CPX $2200 compares Y Register (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag
-  √ CMP $2200,X compares accumulator (0x69) with hex $2202 (0x69) setting the Z,C flag, but not N flag if X==0x02 (1 ms)
-  √ CMP $2200,Y compares accumulator (0x69) with hex $2202 (0x69) setting the Z,C flag, but not N flag if Y==0x02
-  √ CMP ($20,X) gets 0x69 from $3074 and compares to accumulator (0x69) setting Z,C Flag but not N flag, if X == 0x04 (1 ms)
-  √ CMP ($0),Y gets 0x69 from $0310 and compares to on accumulator (0x69) setting Z,C Flag but not N flag, if Y == 0x90
-  √ DEC $80 decrements ZP$80 (0x6A) to equal 0x69 (1 ms)
+  √ CMP $2200 compares accumulator (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag (1 ms)
+  √ CPX $2200 compares X Register (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag
+  √ CPX $2200 compares Y Register (0x69) with hex $2200 (0x69) setting the Z,C flag, but not N flag (1 ms)
+  √ CMP $2200,X compares accumulator (0x69) with hex $2202 (0x69) setting the Z,C flag, but not N flag if X==0x02
+  √ CMP $2200,Y compares accumulator (0x69) with hex $2202 (0x69) setting the Z,C flag, but not N flag if Y==0x02 (1 ms)
+  √ CMP ($20,X) gets 0x69 from $3074 and compares to accumulator (0x69) setting Z,C Flag but not N flag, if X == 0x04
+  √ CMP ($0),Y gets 0x69 from $0310 and compares to on accumulator (0x69) setting Z,C Flag but not N flag, if Y == 0x90 (1 ms)
+  √ DEC $80 decrements ZP$80 (0x6A) to equal 0x69
   √ DEC $80,X decrements ZP$82 (0x01) to equal 0x00 setting Z flag, if X == 02
   √ DEC $2200 decrements $2200 (0x00) to equal 0xFF setting N flag (1 ms)
   √ DEC $2200,X decrements $2202 (0x6A) to equal 0x69 if X==0x02
-  √ EOR #$69 performs Exclusive OR on accumulator (0x69) to make 0x00
-  √ EOR $80 gets #$69 from ZP$80 and performs a Exclusive OR on accumulator (0xE9) to make 0x80 (1 ms)
-  √ EOR $80,X gets #$68 from $82 performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == $02
-  √ EOR $2200 gets #$69 from $2200 and performs Exclusive OR on accumulator (0xE9) to make 0x80 (1 ms)
+  √ EOR #$69 performs Exclusive OR on accumulator (0x69) to make 0x00 (1 ms)
+  √ EOR $80 gets #$69 from ZP$80 and performs a Exclusive OR on accumulator (0xE9) to make 0x80
+  √ EOR $80,X gets #$68 from $82 performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == $02 (1 ms)
+  √ EOR $2200 gets #$69 from $2200 and performs Exclusive OR on accumulator (0xE9) to make 0x80
   √ EOR $2200,X gets #$69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if X == #$0F
-  √ EOR $2200,Y gets #$69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if Y == #$0F
-  √ EOR ($20,X) gets 0x69 from $3074 and performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == 0x04 (1 ms)
+  √ EOR $2200,Y gets #$69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if Y == #$0F (1 ms)
+  √ EOR ($20,X) gets 0x69 from $3074 and performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == 0x04
   √ EOR ($0),Y gets 0x69 from $0310 and performs a Exclusive OR on accumulator (0xE9) to make 0x80 if Y == 0x90
-  √ INC $80 decrements ZP$80 (0x68) to equal 0x69 (1 ms)
+  √ INC $80 decrements ZP$80 (0x68) to equal 0x69
   √ INC $80,X decrements ZP$82 (0xFF) to equal 0x00 setting Z flag, if X == 02
-  √ INC $2200 decrements $2200 (0x) to equal 0xFF setting N flag
-  √ INC $2200,X decrements $2202 (0x68) to equal 0x69 if X==0x02 (1 ms)
-  √ JMP $2200 JMPS back to a point where LDA sets accumulator to 0x69, then JMPS forward $FFFE (1 ms)
-  √ JMP ($3000) JMPS back to a $3000 and reads two bytes which provide the jump address where LDA sets accumulator to 0x69, then JMPS forward $FFFE (1 ms)
-  √ JSR ($3000) skips over setting A to 0x00 by jumping to subroutine at $3000, setting X to 0x69 adding the PC-1 to stack
+  √ INC $2200 decrements $2200 (0x) to equal 0xFF setting N flag (1 ms)
+  √ INC $2200,X decrements $2202 (0x68) to equal 0x69 if X==0x02
+  √ JMP $2200 JMPS back to a point where LDA sets accumulator to 0x69, then JMPS forward $FFFE (2 ms)
+  √ JMP ($3000) JMPS back to a $3000 and reads two bytes which provide the jump address where LDA sets accumulator to 0x69, then JMPS forward $FFFE
+  √ JSR ($3000) skips over setting A to 0x00 by jumping to subroutine at $3000, setting X to 0x69 adding the PC-1 to stack (1 ms)
   √ RTS pulls the PC+1 from the stack and returns (1 ms)
   √ LDA #$69 Loads 0x69 into A Register
-  √ LDA $80 Loads 0x69 from $80 into A Register (1 ms)
-  √ LDA $80,X Loads 0x69 from $7f into A Register if X register is $FF
+  √ LDA $80 Loads 0x69 from $80 into A Register
+  √ LDA $80,X Loads 0x69 from $7f into A Register if X register is $FF (1 ms)
   √ LDA $2200 Loads 0x69 from $2200 into A Register
   √ LDA $2200,X Loads 0x69 from $220F into A Register if X register is $0F (1 ms)
   √ LDA $2200,Y Loads 0x69 from $220F into A Register if Y register is $0F
   √ LDA ($20,X) Loads 0x69 from $3074 into A Register if X register is $04
   √ LDA ($0),Y Loads 0x69 from $0310 into A Register if Y register is $90 (1 ms)
   √ LDA ($0),Y does not carry when low order calculation is < 0xFF
-  √ LDX #$69 Loads 0x69 into X Register (1 ms)
-  √ LDX $80 Loads 0x69 from $80 into X Register
+  √ LDX #$69 Loads 0x69 into X Register
+  √ LDX $80 Loads 0x69 from $80 into X Register (1 ms)
   √ LDX $80,Y Loads 0x69 from $7f into X Register if Y register is $FF
-  √ LDX $2200 Loads 0x69 from $2200 into X Register (1 ms)
-  √ LDX $2200,Y Loads 0x69 from $220F into X Register if Y register is $0F
+  √ LDX $2200 Loads 0x69 from $2200 into X Register
+  √ LDX $2200,Y Loads 0x69 from $220F into X Register if Y register is $0F (1 ms)
   √ LDY #$69 Loads 0x69 into Y Register
   √ LDY $80 Loads 0x69 from $80 into X Register (1 ms)
   √ LDY $80,X Loads 0x69 from $7f into X Register if X register is $FF
   √ LDY $2200 Loads 0x69 from $2200 into Y Register
   √ LDY $2200,X Loads 0x69 from $220F into Y Register if X register is $0F (1 ms)
-  √ LSR A shifts accumulator (0x30) right 1 bit doubling the value to 0x18, C Flag not set
+  √ LSR A shifts accumulator (0x30) right 1 bit halving the value to 0x18, C Flag not set
   √ LSR A shifts accumulator (0x01) right 1 bit setting the C flag and resulting in 0x00 (1 ms)
-  √ LSR $80 shifts ZP$80 (0x30) right 1 bit doubling the value to 0x60
-  √ LSR $80,X shifts ZP$82 (0x30) right 1 bit doubling the value to 0x60, if X == 02
-  √ LSR $2200 shifts $2200 (0x30) right 1 bit doubling the value to 0x60 (1 ms)
-  √ LSR $2200,X shifts $220F (0x30) right 1 bit doubling the value to 0x60 if X == 0F
+  √ LSR $80 shifts ZP$80 (0x30) right 1 bit halving the value to 0x60
+  √ LSR $80,X shifts ZP$82 (0x30) right 1 bit halving the value to 0x60, if X == 02
+  √ LSR $2200 shifts $2200 (0x30) right 1 bit halving the value to 0x60 (1 ms)
+  √ LSR $2200,X shifts $220F (0x30) right 1 bit halving the value to 0x60 if X == 0F
+  √ ORA #$69 performs logical ORA on accumulator (0x29) to make 0x69
+  √ ORA $80 gets #$69 from ZP$80 and performs a logical ORA on accumulator (0x29) to make 0x69 (1 ms)
+  √ ORA $80,X gets #$68 from $82 performs a logical ORA on accumulator (0x29) to make 0x69 if X == $02
+  √ ORA $2200 gets #$69 from $2200 and performs logical ORA on accumulator (0x29) to make 0x69
+  √ ORA $2200,X gets #$69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if X == #$0F (1 ms)
+  √ ORA $2200,Y gets #$69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if Y == #$0F
+  √ ORA ($20,X) gets 0x69 from $3074 and performs a logical ORA on accumulator (0x29) to make 0x69 if X == 0x04 (1 ms)
+  √ ORA ($0),Y gets 0x69 from $0310 and performs a logical ORA on accumulator (0x29) to make 0x69 if Y == 0x90
+  √ ROL A shifts accumulator (0x30) left 1 bit doubling the value to 0x60, then setting bit 0 to old Carry flag, C Flag not set
+  √ ROL A shifts accumulator (0x80) right 1 bit setting the C flag and resulting in 0x00 (1 ms)
+  √ ROL $80 shifts ZP$80 (0x30) right 1 bit doubling the value to 0x60
+  √ ROL $80,X shifts ZP$82 (0x30) right 1 bit doubling the value to 0x60, if X == 02 (1 ms)
+  √ ROL $2200 shifts $2200 (0x30) right 1 bit doubling the value to 0x60
+  √ ROL $2200,X shifts $220F (0x30) right 1 bit doubling the value to 0x60 if X == 0F (2 ms)
+  √ ROR A shifts accumulator (0x30) right 1 bit halving the value to 0x18, C Flag not set
+  √ ROR A shifts accumulator (0x01) right 1 bit setting the C flag and resulting in 0x00 (1 ms)
+  √ ROR $80 shifts ZP$80 (0x30) right 1 bit halving the value to 0x60
+  √ ROR $80,X shifts ZP$82 (0x30) right 1 bit halving the value to 0x60, if X == 02
+  √ ROR $2200 shifts $2200 (0x30) right 1 bit halving the value to 0x60 (1 ms)
+  √ ROR $2200,X shifts $220F (0x30) right 1 bit halving the value to 0x60 if X == 0F
   √ STA $22 stores 0x69 from Register A into Zero Page memory @ $22 (1 ms)
   √ STA $80,X stores 0x69 from Register A into Zero Page memory @ $7F if X register is $FF
   √ STA $2200 stores 0x69 from Register A into memory @ $2200
@@ -148,12 +168,12 @@ PASS js/tests/cpu.test.js
   √ TAX transfers 0x80 from Register A to Register X setting N flag
   √ TAY transfers 0x00 from Register A to Register Y setting Z flag (1 ms)
   √ TSX transfers stack pointer to Register X
-  √ TXA transfers 0x00 from Register X to Register A (1 ms)
-  √ TXS transfers Register X to stack pointer
+  √ TXA transfers 0x00 from Register X to Register A
+  √ TXS transfers Register X to stack pointer (1 ms)
   √ TYA transfers 0x69 from Register Y to Register A
 
 Test Suites: 1 passed, 1 total
-Tests:       152 passed, 152 total
+Tests:       172 passed, 172 total
 Snapshots:   0 total
-Time:        1.177 s, estimated 3 s
+Time:        1.175 s, estimated 2 s
 Ran all test suites.

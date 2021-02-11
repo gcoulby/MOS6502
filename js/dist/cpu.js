@@ -484,7 +484,6 @@ class CPU {
                     this.set_NZ_flags(byte);
                     this.load_byte_into_register(register, byte);
                     break;
-                //TODO : LSR
                 /*===========*/
                 /*  LSR
                 /*===========*/
@@ -525,6 +524,55 @@ class CPU {
                     break;
                 //TODO : ORA
                 /*===========*/
+                /*  ORA
+                /*===========*/
+                case instruction_1.default.ORA_IM: // ORA #$80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_immediate();
+                    this.A = this.logical_or(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.ORA_ZP: // ORA $80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_from_zero_page();
+                    this.A = this.logical_or(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.ORA_ZPX: // ORA $80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_from_zero_page_add_XY(register_1.default.X);
+                    this.A = this.logical_or(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.ORA_ABS: // ORA $2200
+                    var byte = this.A;
+                    var byte2 = this.get_byte_absolute();
+                    this.A = this.logical_or(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.ORA_ABSX: // ORA $2200,X
+                case instruction_1.default.ORA_ABSY: // ORA $2200,Y
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_absolute_XY(add_register);
+                    this.A = this.logical_or(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.ORA_INDX: // ORA ($80,X)
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_indexed_indirect_X(add_register);
+                    this.A = this.logical_or(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                case instruction_1.default.ORA_INDY: // ORA ($80),Y
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_indirect_indexed_Y(add_register);
+                    this.A = this.logical_or(byte, byte2);
+                    this.set_NZ_flags(this.A);
+                    break;
+                /*===========*/
                 /*  Stack
                 /*===========*/
                 case instruction_1.default.PHA: // PHA
@@ -539,8 +587,80 @@ class CPU {
                 case instruction_1.default.PLP: // PLP
                     this.P = this.pull_from_stack();
                     break;
-                //TODO : ROL
-                //TODO : ROR
+                /*===========*/
+                /*  ROL
+                /*===========*/
+                case instruction_1.default.ROL_A: // ROL A
+                    var old_carry = (this.P & flag_1.default.C);
+                    this.A = this.shift_left(this.A) | old_carry;
+                    break;
+                case instruction_1.default.ROL_ZP: // ROL $80
+                    var zp_addr = this.read_byte(this.PC);
+                    var byte = this.get_byte_from_zero_page();
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_left(byte) | old_carry;
+                    this.store_byte(zp_addr, shift);
+                    break;
+                case instruction_1.default.ROL_ZPX: // ROL $80,X
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var zp_addr = this.intToByte(this.read_byte(this.PC) + this.X);
+                    var byte = this.get_byte_from_zero_page_add_XY(add_register);
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_left(byte) | old_carry;
+                    this.store_byte(zp_addr, shift);
+                    break;
+                case instruction_1.default.ROL_ABS: // ROL $2200
+                    var abs_addr = this.read_word(this.PC);
+                    var byte = this.get_byte_absolute();
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_left(byte) | old_carry;
+                    this.store_byte(abs_addr, shift);
+                    break;
+                case instruction_1.default.ROL_ABSX: // ROL $2200,X
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var abs_addr = this.intToWord(this.read_word(this.PC) + this.X);
+                    var byte = this.get_byte_absolute_XY(add_register);
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_left(byte) | old_carry;
+                    this.store_byte(abs_addr, shift);
+                    break;
+                /*===========*/
+                /*  ROR
+                /*===========*/
+                case instruction_1.default.ROR_A: // ROR A
+                    var old_carry = (this.P & flag_1.default.C);
+                    this.A = this.shift_right(this.A) | old_carry;
+                    break;
+                case instruction_1.default.ROR_ZP: // ROR $80
+                    var zp_addr = this.read_byte(this.PC);
+                    var byte = this.get_byte_from_zero_page();
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_right(byte) | old_carry;
+                    this.store_byte(zp_addr, shift);
+                    break;
+                case instruction_1.default.ROR_ZPX: // ROR $80,X
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var zp_addr = this.intToByte(this.read_byte(this.PC) + this.X);
+                    var byte = this.get_byte_from_zero_page_add_XY(add_register);
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_right(byte) | old_carry;
+                    this.store_byte(zp_addr, shift);
+                    break;
+                case instruction_1.default.ROR_ABS: // ROR $2200
+                    var abs_addr = this.read_word(this.PC);
+                    var byte = this.get_byte_absolute();
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_right(byte) | old_carry;
+                    this.store_byte(abs_addr, shift);
+                    break;
+                case instruction_1.default.ROR_ABSX: // ROR $2200,X
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var abs_addr = this.intToWord(this.read_word(this.PC) + this.X);
+                    var byte = this.get_byte_absolute_XY(add_register);
+                    var old_carry = (this.P & flag_1.default.C);
+                    var shift = this.shift_right(byte) | old_carry;
+                    this.store_byte(abs_addr, shift);
+                    break;
                 //TODO : RTI
                 case instruction_1.default.RTS:
                     var low_order = this.pull_from_stack();
@@ -760,6 +880,9 @@ class CPU {
     }
     logical_and(byte1, byte2) {
         return this.intToByte(byte1 & byte2);
+    }
+    logical_or(byte1, byte2) {
+        return this.intToByte(byte1 | byte2);
     }
     xor(byte1, byte2) {
         return this.intToByte(byte1 ^ byte2);

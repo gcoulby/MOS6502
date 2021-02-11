@@ -23,7 +23,7 @@ var Instruction;
     Instruction[Instruction["ASL_ZP"] = 6] = "ASL_ZP";
     Instruction[Instruction["ASL_ZPX"] = 22] = "ASL_ZPX";
     Instruction[Instruction["ASL_ABS"] = 14] = "ASL_ABS";
-    Instruction[Instruction["ASL_ABSX"] = 29] = "ASL_ABSX";
+    Instruction[Instruction["ASL_ABSX"] = 30] = "ASL_ABSX";
     //BCC - Brach if Carry Clear
     Instruction[Instruction["BCC"] = 144] = "BCC";
     //BCS - Brach if Carry Set
@@ -131,6 +131,15 @@ var Instruction;
     Instruction[Instruction["LSR_ABSX"] = 94] = "LSR_ABSX";
     //NOP - No Operation
     Instruction[Instruction["NOP"] = 234] = "NOP";
+    //ORA - Logical ORA
+    Instruction[Instruction["ORA_IM"] = 9] = "ORA_IM";
+    Instruction[Instruction["ORA_ZP"] = 5] = "ORA_ZP";
+    Instruction[Instruction["ORA_ZPX"] = 21] = "ORA_ZPX";
+    Instruction[Instruction["ORA_ABS"] = 13] = "ORA_ABS";
+    Instruction[Instruction["ORA_ABSX"] = 29] = "ORA_ABSX";
+    Instruction[Instruction["ORA_ABSY"] = 25] = "ORA_ABSY";
+    Instruction[Instruction["ORA_INDX"] = 1] = "ORA_INDX";
+    Instruction[Instruction["ORA_INDY"] = 17] = "ORA_INDY";
     //PHA - Push Accumulator to Stack
     Instruction[Instruction["PHA"] = 72] = "PHA";
     //PHA - Push Accumulator to Stack
@@ -141,6 +150,18 @@ var Instruction;
     Instruction[Instruction["PLP"] = 40] = "PLP";
     //RTS - Return from Subroutine
     Instruction[Instruction["RTS"] = 96] = "RTS";
+    //ROL - Rotate Left
+    Instruction[Instruction["ROL_A"] = 42] = "ROL_A";
+    Instruction[Instruction["ROL_ZP"] = 38] = "ROL_ZP";
+    Instruction[Instruction["ROL_ZPX"] = 54] = "ROL_ZPX";
+    Instruction[Instruction["ROL_ABS"] = 46] = "ROL_ABS";
+    Instruction[Instruction["ROL_ABSX"] = 62] = "ROL_ABSX";
+    //ROR - Rotate Left
+    Instruction[Instruction["ROR_A"] = 106] = "ROR_A";
+    Instruction[Instruction["ROR_ZP"] = 102] = "ROR_ZP";
+    Instruction[Instruction["ROR_ZPX"] = 118] = "ROR_ZPX";
+    Instruction[Instruction["ROR_ABS"] = 110] = "ROR_ABS";
+    Instruction[Instruction["ROR_ABSX"] = 126] = "ROR_ABSX";
     //SEC - Set Carry Flag
     Instruction[Instruction["SEC"] = 56] = "SEC";
     //SEC - Set Decimal Flag
