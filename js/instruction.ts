@@ -96,6 +96,11 @@ enum Instruction {
     INX         = 0xE8,
     //INY - Increment X Register
     INY         = 0xC8,
+    //JMP - Jump
+    JMP_ABS     = 0x4C,
+    JMP_IND     = 0x6C,
+    //JSR - Jump to Subroutine
+    JSR         = 0x20,
     //LDA - Load A Register
     LDA_IM      = 0xA9,
     LDA_ZP      = 0xA5,
@@ -117,8 +122,7 @@ enum Instruction {
     LDY_ZPX     = 0xB4,
     LDY_ABS     = 0xAC,
     LDY_ABSX    = 0xBC,
-    //JMP
-    JSR         = 0x20,
+    
     //NOP - No Operation
     NOP         = 0xEA,
     //PHA - Push Accumulator to Stack
@@ -129,6 +133,8 @@ enum Instruction {
     PLA         = 0x68,
     //PHA - Push Accumulator to Stack
     PLP         = 0x28,
+    //RTS - Return from Subroutine
+    RTS         = 0x60,
     //SEC - Set Carry Flag
     SEC         = 0x38,
     //SEC - Set Decimal Flag

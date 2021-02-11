@@ -30,6 +30,8 @@ class CPU {
     public get P(): number { return this.#P; }
     public set P(v: number) { this.#P = this.intToByte(v); }
     
+    public debug_stack : number[];
+
     memory: Memory
     print_bytes: boolean = false;
     brk_count :number = 0;
@@ -41,11 +43,18 @@ class CPU {
         this.SP = 0xff;
         this.P = Flag.CLR;     
         this.memory = memory;
+        this.debug_stack = new Array();
     }
 
     public execute() {
          //TODO: stop when the program finishes
+        if(this.print_bytes){
+            console.log(this.memory.Data.slice(this.PC));
+        }
         while (this.PC !== 0) {
+            if(this.print_bytes){
+                console.log(`ADDR: ${this.PC.toString(16)}`);
+            }
             let ins = this.fetch_byte();
             if(ins > 0 && this.brk_count > 0)
                 this.brk_count = 0;
@@ -361,12 +370,9 @@ class CPU {
                     this.A = this.xor(byte, byte2);
                     this.set_NZ_flags(this.A);
                     break;
-
-                //TODO : INC
                 /*===========*/
                 /*  INC|X|Y 
                 /*===========*/
-                //TODO : INC
                 case Instruction.INC_ZP: // INC $80
                     var addr = this.get_zero_page_addr();
                     this.increment_memory(addr);
@@ -389,14 +395,33 @@ class CPU {
                     this.increment_register(register);
                     this.set_NZ_flags(this[register]);
                     break;
-                //TODO : JMP
-                //TODO : JSR
+                case Instruction.JMP_ABS: // JMP $2200
+                    var addr = this.get_absolute_addr();
+                    this.PC = addr;
+                    break;
+                case Instruction.JMP_IND: // JMP ($2200)
+                    var ind_addr = this.get_absolute_addr();
+                    var addr = this.read_word(ind_addr);
+                    this.PC = addr;
+                    break;
+                case Instruction.JSR: // JSR ($2200)
+                    var addr = this.get_absolute_addr();
+                    var current_addr = this.PC - 1;
+                    var high_order = this.intToByte(current_addr >> 8);
+                    this.push_to_stack(high_order);
+                    var low_order = this.intToByte(current_addr);
+                    this.push_to_stack(low_order);
+                    this.PC = addr;
+                    break;
                 /*===========*/
                 /*  LDA|X|Y 
                 /*===========*/
                 case Instruction.LDA_IM: // LDA #$80
                 case Instruction.LDX_IM: // LDX #$80
                 case Instruction.LDY_IM: // LDY #$80
+                    if(this.print_bytes){
+                        console.log(`LDA_IM`);
+                    }
                     var register = this.get_reg_from_instruction(ins, 2);
                     var byte = this.get_byte_immediate();
                     this.set_NZ_flags(byte);
@@ -478,6 +503,12 @@ class CPU {
                 //TODO : ROR
                 //TODO : RTI
                 //TODO : RTS
+                case Instruction.RTS:
+                    console.log("dddd");
+                    var low_order = this.pull_from_stack();
+                    var high_order = this.pull_from_stack() << 8;
+                    this.PC = this.intToWord(high_order + low_order + 1);
+                    break;// TODO: Test RTS
                 //TODO : SBC
                 case Instruction.SEC: // SEC
                     this.set_flag(Flag.C);
@@ -838,13 +869,18 @@ class CPU {
     private fetch_byte(): number {
         let data = this.read_byte(this.PC);
         this.increment_register(Register.PC);
-        if(this.print_bytes)
-            console.log(data);
+        this.debug_stack.push(data);
+        if(this.print_bytes){
+            console.log(`ADDR: ${this.PC.toString(16)}`);
+            console.log(`BYTE: ${data.toString(16)}`);
+        }
         return data;
     }
 
     private fetch_word(): number {
         let data = this.read_word(this.PC);
+        this.debug_stack.push(data & 0xFF);
+        this.debug_stack.push((data >> 8) & 0xFF);
         this.increment_register(Register.PC);
         this.increment_register(Register.PC);
         return data;

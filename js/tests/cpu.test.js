@@ -75,6 +75,11 @@ test('Incrementing 16bit registers from 0xFF == 0x100', () => {
     expect(cpu.PC).toBe(0x100);
 });
 
+test('Program loaded into memory at the correct address', () => {
+    let cpu = get_CPU(0x0000, new Uint8Array([]), true);
+    expect(true).toBe(true);
+});
+
 
 /*=============================================*/
 /*    Flags
@@ -1030,6 +1035,65 @@ test('INC $2200,X decrements $2202 (0x68) to equal 0x69 if X==0x02', () => {
     expect(cpu.read_byte(0x2202)).toBe(0x69);
     expect(cpu.check_flag(Flag.N)).toBe(false);
     expect(cpu.check_flag(Flag.Z)).toBe(false);
+});
+
+/*=============================================*/
+/*    JMP
+/*=============================================*/
+
+test('JMP $2200 JMPS back to a point where LDA sets accumulator to 0x69, then JMPS forward $FFFE', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.JMP_ABS, 0x00, 0x22]));
+    let bytes = new Uint8Array([Instruction.LDA_IM, 0x69, Instruction.JMP_ABS, 0xFE, 0xFF]);
+    cpu.memory.load_bytes(bytes, 0x2200);
+    cpu.execute();
+    let byte_check = [Instruction.JMP_ABS, 0x00, 0x22, Instruction.LDA_IM, 0x69];
+    expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check);
+    expect(cpu.A).toBe(0x69);
+});
+
+test('JMP ($3000) JMPS back to a $3000 and reads two bytes which provide the jump address where LDA sets accumulator to 0x69, then JMPS forward $FFFE', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.JMP_IND, 0x00, 0x30]));
+    cpu.store_byte(0x3000, 0x00);
+    cpu.store_byte(0x3001, 0x22);
+    let bytes = new Uint8Array([Instruction.LDA_IM, 0x69, Instruction.JMP_ABS, 0xFE, 0xFF]);
+    cpu.memory.load_bytes(bytes, 0x2200);
+    cpu.execute();
+    let byte_check = [Instruction.JMP_IND, 0x00, 0x30, Instruction.LDA_IM, 0x69];
+    expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check);
+    expect(cpu.A).toBe(0x69);
+});
+
+test('JSR ($3000) skips over setting A to 0x00 by jumping to subroutine at $3000, setting X to 0x69 adding the PC-1 to stack', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.JSR, 0x05, 0xF0, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x69);
+    expect(cpu.X).toBe(0x69);
+    let byte_check = [Instruction.JSR, 0x05, 0xF0, Instruction.LDX_IM, 0x69];
+    expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check)
+    let low_order = cpu.pull_from_stack();
+    let high_order = cpu.pull_from_stack() << 8;
+    let pc = cpu.intToWord(high_order + low_order);
+    expect(pc).toBe(0xF002);
+});
+
+
+test('RTS pulls the PC+1 from the stack and returns', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.JSR, 0x00, 0x22, Instruction.LDA_IM, 0x00]));
+    let bytes = new Uint8Array([Instruction.LDX_IM, 0x69, Instruction.RTS]);
+    cpu.memory.load_bytes(bytes, 0x2200);
+    cpu.A = 0x69;
+    cpu.X = 0x00;
+    cpu.execute();
+    expect(cpu.A).toBe(0x00);
+    expect(cpu.X).toBe(0x69);
+    console.log(cpu.debug_stack);
+    let byte_check = [Instruction.JSR, 0x00, 0x22, Instruction.LDX_IM, 0x69, Instruction.RTS, Instruction.LDA_IM, 0x00];
+    expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check)
+    let low_order = cpu.pull_from_stack();
+    let high_order = cpu.pull_from_stack() << 8;
+    let pc = cpu.intToWord(high_order + low_order);
 });
 
 

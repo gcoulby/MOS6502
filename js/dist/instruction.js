@@ -97,6 +97,11 @@ var Instruction;
     Instruction[Instruction["INX"] = 232] = "INX";
     //INY - Increment X Register
     Instruction[Instruction["INY"] = 200] = "INY";
+    //JMP - Jump
+    Instruction[Instruction["JMP_ABS"] = 76] = "JMP_ABS";
+    Instruction[Instruction["JMP_IND"] = 108] = "JMP_IND";
+    //JSR - Jump to Subroutine
+    Instruction[Instruction["JSR"] = 32] = "JSR";
     //LDA - Load A Register
     Instruction[Instruction["LDA_IM"] = 169] = "LDA_IM";
     Instruction[Instruction["LDA_ZP"] = 165] = "LDA_ZP";
@@ -118,8 +123,6 @@ var Instruction;
     Instruction[Instruction["LDY_ZPX"] = 180] = "LDY_ZPX";
     Instruction[Instruction["LDY_ABS"] = 172] = "LDY_ABS";
     Instruction[Instruction["LDY_ABSX"] = 188] = "LDY_ABSX";
-    //JMP
-    Instruction[Instruction["JSR"] = 32] = "JSR";
     //NOP - No Operation
     Instruction[Instruction["NOP"] = 234] = "NOP";
     //PHA - Push Accumulator to Stack
@@ -130,6 +133,8 @@ var Instruction;
     Instruction[Instruction["PLA"] = 104] = "PLA";
     //PHA - Push Accumulator to Stack
     Instruction[Instruction["PLP"] = 40] = "PLP";
+    //RTS - Return from Subroutine
+    Instruction[Instruction["RTS"] = 96] = "RTS";
     //SEC - Set Carry Flag
     Instruction[Instruction["SEC"] = 56] = "SEC";
     //SEC - Set Decimal Flag
