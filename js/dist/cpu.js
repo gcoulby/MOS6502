@@ -666,7 +666,6 @@ class CPU {
                     var high_order = this.pull_from_stack() << 8;
                     this.PC = this.intToWord(high_order + low_order + 1);
                     break;
-                //TODO : SBC
                 /*===========*/
                 /*  SBC
                 /*===========*/
