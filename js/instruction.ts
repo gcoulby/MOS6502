@@ -161,6 +161,15 @@ enum Instruction {
     ROR_ZPX     = 0x76,
     ROR_ABS     = 0x6E,
     ROR_ABSX    = 0x7E,
+    //SBC - subtract with Carry
+    SBC_IM      = 0xE9,
+    SBC_ZP      = 0xE5,
+    SBC_ZPX     = 0xF5,
+    SBC_ABS     = 0xED,
+    SBC_ABSX    = 0xFD,
+    SBC_ABSY    = 0xF9,
+    SBC_INDX    = 0xE1,
+    SBC_INDY    = 0xF1,
     //SEC - Set Carry Flag
     SEC         = 0x38,
     //SEC - Set Decimal Flag

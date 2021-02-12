@@ -30,9 +30,9 @@ function update() {
     // memory.set(0xff00, 0x69);
     // let program = new Uint8Array([Instruction.LDA_IM, 0x69, 0xff]);
     // memory.load_bytes(program, 0xF000);
-    // hello();
+    hello();
     let program = new Uint8Array([Instruction.ADC_IM, 0x68]);
-    memory.load_bytes(program, 0xF000);
+    // memory.load_bytes(program, 0xF000);
     // memory.set(0x3074, 0x69);
     // memory.set(0x24, 0x74);
     // memory.set(0x25, 0x30);

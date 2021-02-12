@@ -162,6 +162,15 @@ var Instruction;
     Instruction[Instruction["ROR_ZPX"] = 118] = "ROR_ZPX";
     Instruction[Instruction["ROR_ABS"] = 110] = "ROR_ABS";
     Instruction[Instruction["ROR_ABSX"] = 126] = "ROR_ABSX";
+    //SBC - subtract with Carry
+    Instruction[Instruction["SBC_IM"] = 233] = "SBC_IM";
+    Instruction[Instruction["SBC_ZP"] = 229] = "SBC_ZP";
+    Instruction[Instruction["SBC_ZPX"] = 245] = "SBC_ZPX";
+    Instruction[Instruction["SBC_ABS"] = 237] = "SBC_ABS";
+    Instruction[Instruction["SBC_ABSX"] = 253] = "SBC_ABSX";
+    Instruction[Instruction["SBC_ABSY"] = 249] = "SBC_ABSY";
+    Instruction[Instruction["SBC_INDX"] = 225] = "SBC_INDX";
+    Instruction[Instruction["SBC_INDY"] = 241] = "SBC_INDY";
     //SEC - Set Carry Flag
     Instruction[Instruction["SEC"] = 56] = "SEC";
     //SEC - Set Decimal Flag

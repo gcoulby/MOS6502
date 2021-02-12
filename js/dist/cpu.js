@@ -522,7 +522,6 @@ class CPU {
                 case instruction_1.default.NOP: // NOP
                     this.no_operation();
                     break;
-                //TODO : ORA
                 /*===========*/
                 /*  ORA
                 /*===========*/
@@ -668,6 +667,51 @@ class CPU {
                     this.PC = this.intToWord(high_order + low_order + 1);
                     break;
                 //TODO : SBC
+                /*===========*/
+                /*  SBC
+                /*===========*/
+                case instruction_1.default.SBC_IM: // SBC #$80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_immediate();
+                    this.A = this.subtract_with_carry(byte, byte2);
+                    break;
+                case instruction_1.default.SBC_ZP: // SBC $80
+                    var byte = this.A;
+                    var byte2 = this.get_byte_from_zero_page();
+                    this.A = this.subtract_with_carry(byte, byte2);
+                    break;
+                case instruction_1.default.SBC_ZPX: // SBC $80,X
+                    var byte = this.A;
+                    var byte2 = this.get_byte_from_zero_page_add_XY(register_1.default.X);
+                    this.A = this.subtract_with_carry(byte, byte2);
+                    break;
+                case instruction_1.default.SBC_ABS: // SBC $2200
+                    var byte = this.A;
+                    var byte2 = this.get_byte_absolute();
+                    this.A = this.subtract_with_carry(byte, byte2);
+                    break;
+                case instruction_1.default.SBC_ABSX: // SBC $2200,X
+                case instruction_1.default.SBC_ABSY: // SBC $2200,Y
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_absolute_XY(add_register);
+                    this.A = this.subtract_with_carry(byte, byte2);
+                    break;
+                case instruction_1.default.SBC_INDX: // SBC ($80,X)
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_indexed_indirect_X(add_register);
+                    this.A = this.subtract_with_carry(byte, byte2);
+                    break;
+                case instruction_1.default.SBC_INDY: // SBC ($80),Y
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    var byte = this.A;
+                    var byte2 = this.get_byte_indirect_indexed_Y(add_register);
+                    this.A = this.subtract_with_carry(byte, byte2);
+                    break;
+                /*===========*/
+                /*  Set Flags
+                /*===========*/
                 case instruction_1.default.SEC: // SEC
                     this.set_flag(flag_1.default.C);
                     break;
@@ -874,6 +918,14 @@ class CPU {
         let carry = this.check_flag(flag_1.default.C) ? 1 : 0;
         let result = this.intToByte(byte1 + byte2 + carry);
         let carryCheck = this.check_overflow(byte1, result);
+        this.set_flag(flag_1.default.C, carryCheck);
+        this.set_NZ_flags(result);
+        return result;
+    }
+    subtract_with_carry(byte1, byte2) {
+        let carry = this.check_flag(flag_1.default.C) ? 0 : 1;
+        let result = this.intToByte(byte1 - byte2 - carry);
+        let carryCheck = this.check_underflow(byte1, result);
         this.set_flag(flag_1.default.C, carryCheck);
         this.set_NZ_flags(result);
         return result;

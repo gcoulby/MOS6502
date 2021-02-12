@@ -282,7 +282,7 @@ test('PLP pulls Processor status from the stack, sets the P Register and decreme
 /*    ADC
 /*=============================================*/
 
-test('ADC #$68 Adds to accumulator (#$01) to make 0x69 adding the carry, unsetting C flag once consumed', function () {
+test('ADC #$68 Adds to accumulator (0x01) to make 0x69 adding the carry, unsetting C flag once consumed', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_IM, 0x68]));
   cpu.A = 0x00;
   cpu.set_flag(_flag["default"].C);
@@ -290,7 +290,7 @@ test('ADC #$68 Adds to accumulator (#$01) to make 0x69 adding the carry, unsetti
   expect(cpu.A).toBe(0x69);
   expect(cpu.check_flag(_flag["default"].C)).toBe(false);
 });
-test('ADC #$68 Adds to accumulator (#$FE) to make 0x69 adding the carry, resetting C flag', function () {
+test('ADC #$68 Adds to accumulator (0xFE) to make 0x69 adding the carry, resetting C flag', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_IM, 0x69]));
   cpu.A = 0xFF;
   cpu.set_flag(_flag["default"].C);
@@ -298,14 +298,14 @@ test('ADC #$68 Adds to accumulator (#$FE) to make 0x69 adding the carry, resetti
   expect(cpu.A).toBe(0x69);
   expect(cpu.check_flag(_flag["default"].C)).toBe(true);
 });
-test('ADC $80 gets #$68 from ZP$80 and adds to accumulator (#$01) to make 0x69', function () {
+test('ADC $80 gets 0x68 from ZP$80 and adds to accumulator (0x01) to make 0x69', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_ZP, 0x80]));
   cpu.store_byte(0x80, 0x68);
   cpu.A = 0x01;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ADC $80,X gets #$68 from $82 and adds to accumulator (#$01) to make 0x69 if X == $02', function () {
+test('ADC $80,X gets 0x68 from $82 and adds to accumulator (0x01) to make 0x69 if X == $02', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_ZPX, 0x80]));
   cpu.store_byte(0x82, 0x68);
   cpu.A = 0x01;
@@ -313,14 +313,14 @@ test('ADC $80,X gets #$68 from $82 and adds to accumulator (#$01) to make 0x69 i
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ADC $2200 gets #$69 from $2200 and adds to accumulator (#$01) to make 0x69', function () {
+test('ADC $2200 gets 0x69 from $2200 and adds to accumulator (0x01) to make 0x69', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_ABS, 0x00, 0x22]));
   cpu.store_byte(0x2200, 0x68);
   cpu.A = 0x01;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ADC $2200,X gets #$69 from $220F and adds to accumulator (#$01) to make 0x69 if X == #$0F', function () {
+test('ADC $2200,X gets 0x69 from $220F and adds to accumulator (0x01) to make 0x69 if X == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_ABSX, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x68);
   cpu.A = 0x01;
@@ -328,7 +328,7 @@ test('ADC $2200,X gets #$69 from $220F and adds to accumulator (#$01) to make 0x
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ADC $2200,Y gets #$69 from $220F and adds to accumulator (#$01) to make 0x69 if Y == #$0F', function () {
+test('ADC $2200,Y gets 0x69 from $220F and adds to accumulator (0x01) to make 0x69 if Y == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_ABSY, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x68);
   cpu.A = 0x01;
@@ -336,7 +336,7 @@ test('ADC $2200,Y gets #$69 from $220F and adds to accumulator (#$01) to make 0x
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ADC ($20,X) gets 0x68 from $3074 and adds to accumulator (#$01) to make 0x69 if X == 0x04', function () {
+test('ADC ($20,X) gets 0x68 from $3074 and adds to accumulator (0x01) to make 0x69 if X == 0x04', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_INDX, 0x20]));
   cpu.store_byte(0x3074, 0x68);
   cpu.store_byte(0x24, 0x74);
@@ -346,7 +346,7 @@ test('ADC ($20,X) gets 0x68 from $3074 and adds to accumulator (#$01) to make 0x
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ADC ($0),Y gets 0x68 from $0310 and adds to accumulator (#$01) to make 0x69 if Y == 0x90', function () {
+test('ADC ($0),Y gets 0x68 from $0310 and adds to accumulator (0x01) to make 0x69 if Y == 0x90', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ADC_INDY, 0x00]));
   cpu.store_byte(0x0310, 0x68);
   cpu.store_byte(0x00, 0x80);
@@ -367,14 +367,14 @@ test('AND #$69 performs logical AND on accumulator (0xE9) to make 0x69', functio
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('AND $80 gets #$69 from ZP$80 and performs a logical AND on accumulator (0xE9) to make 0x69', function () {
+test('AND $80 gets 0x69 from ZP$80 and performs a logical AND on accumulator (0xE9) to make 0x69', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].AND_ZP, 0x80]));
   cpu.store_byte(0x80, 0x69);
   cpu.A = 0xE9;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('AND $80,X gets #$68 from $82 performs a logical AND on accumulator (0xE9) to make 0x69 if X == $02', function () {
+test('AND $80,X gets 0x68 from $82 performs a logical AND on accumulator (0xE9) to make 0x69 if X == $02', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].AND_ZPX, 0x80]));
   cpu.store_byte(0x82, 0x69);
   cpu.A = 0xE9;
@@ -382,14 +382,14 @@ test('AND $80,X gets #$68 from $82 performs a logical AND on accumulator (0xE9) 
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('AND $2200 gets #$69 from $2200 and performs logical AND on accumulator (0xE9) to make 0x69', function () {
+test('AND $2200 gets 0x69 from $2200 and performs logical AND on accumulator (0xE9) to make 0x69', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].AND_ABS, 0x00, 0x22]));
   cpu.store_byte(0x2200, 0x69);
   cpu.A = 0xE9;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('AND $2200,X gets #$69 from $220F and performs logical AND on accumulator (0xE9) to make 0x69 if X == #$0F', function () {
+test('AND $2200,X gets 0x69 from $220F and performs logical AND on accumulator (0xE9) to make 0x69 if X == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].AND_ABSX, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x69);
   cpu.A = 0xE9;
@@ -397,7 +397,7 @@ test('AND $2200,X gets #$69 from $220F and performs logical AND on accumulator (
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('AND $2200,Y gets #$69 from $220F and performs logical AND on accumulator (0xE9) to make 0x69 if Y == #$0F', function () {
+test('AND $2200,Y gets 0x69 from $220F and performs logical AND on accumulator (0xE9) to make 0x69 if Y == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].AND_ABSY, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x69);
   cpu.A = 0xE9;
@@ -849,7 +849,7 @@ test('EOR #$69 performs Exclusive OR on accumulator (0x69) to make 0x00', functi
   expect(cpu.A).toBe(0x00);
   expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
 });
-test('EOR $80 gets #$69 from ZP$80 and performs a Exclusive OR on accumulator (0xE9) to make 0x80', function () {
+test('EOR $80 gets 0x69 from ZP$80 and performs a Exclusive OR on accumulator (0xE9) to make 0x80', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ZP, 0x80]));
   cpu.store_byte(0x80, 0x69);
   cpu.A = 0xE9;
@@ -857,7 +857,7 @@ test('EOR $80 gets #$69 from ZP$80 and performs a Exclusive OR on accumulator (0
   expect(cpu.A).toBe(0x80);
   expect(cpu.check_flag(_flag["default"].N)).toBe(true);
 });
-test('EOR $80,X gets #$68 from $82 performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == $02', function () {
+test('EOR $80,X gets 0x68 from $82 performs a Exclusive OR on accumulator (0xE9) to make 0x80 if X == $02', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ZPX, 0x80]));
   cpu.store_byte(0x82, 0x69);
   cpu.A = 0xE9;
@@ -865,14 +865,14 @@ test('EOR $80,X gets #$68 from $82 performs a Exclusive OR on accumulator (0xE9)
   cpu.execute();
   expect(cpu.A).toBe(0x80);
 });
-test('EOR $2200 gets #$69 from $2200 and performs Exclusive OR on accumulator (0xE9) to make 0x80', function () {
+test('EOR $2200 gets 0x69 from $2200 and performs Exclusive OR on accumulator (0xE9) to make 0x80', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ABS, 0x00, 0x22]));
   cpu.store_byte(0x2200, 0x69);
   cpu.A = 0xE9;
   cpu.execute();
   expect(cpu.A).toBe(0x80);
 });
-test('EOR $2200,X gets #$69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if X == #$0F', function () {
+test('EOR $2200,X gets 0x69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if X == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ABSX, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x69);
   cpu.A = 0xE9;
@@ -880,7 +880,7 @@ test('EOR $2200,X gets #$69 from $220F and performs Exclusive OR on accumulator 
   cpu.execute();
   expect(cpu.A).toBe(0x80);
 });
-test('EOR $2200,Y gets #$69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if Y == #$0F', function () {
+test('EOR $2200,Y gets 0x69 from $220F and performs Exclusive OR on accumulator (0xE9) to make 0x80 if Y == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].EOR_ABSY, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x69);
   cpu.A = 0xE9;
@@ -1196,14 +1196,14 @@ test('ORA #$69 performs logical ORA on accumulator (0x29) to make 0x69', functio
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ORA $80 gets #$69 from ZP$80 and performs a logical ORA on accumulator (0x29) to make 0x69', function () {
+test('ORA $80 gets 0x69 from ZP$80 and performs a logical ORA on accumulator (0x29) to make 0x69', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ZP, 0x80]));
   cpu.store_byte(0x80, 0x69);
   cpu.A = 0x29;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ORA $80,X gets #$68 from $82 performs a logical ORA on accumulator (0x29) to make 0x69 if X == $02', function () {
+test('ORA $80,X gets 0x68 from $82 performs a logical ORA on accumulator (0x29) to make 0x69 if X == $02', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ZPX, 0x80]));
   cpu.store_byte(0x82, 0x69);
   cpu.A = 0x29;
@@ -1211,14 +1211,14 @@ test('ORA $80,X gets #$68 from $82 performs a logical ORA on accumulator (0x29) 
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ORA $2200 gets #$69 from $2200 and performs logical ORA on accumulator (0x29) to make 0x69', function () {
+test('ORA $2200 gets 0x69 from $2200 and performs logical ORA on accumulator (0x29) to make 0x69', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ABS, 0x00, 0x22]));
   cpu.store_byte(0x2200, 0x69);
   cpu.A = 0x29;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ORA $2200,X gets #$69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if X == #$0F', function () {
+test('ORA $2200,X gets 0x69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if X == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ABSX, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x69);
   cpu.A = 0x29;
@@ -1226,7 +1226,7 @@ test('ORA $2200,X gets #$69 from $220F and performs logical ORA on accumulator (
   cpu.execute();
   expect(cpu.A).toBe(0x69);
 });
-test('ORA $2200,Y gets #$69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if Y == #$0F', function () {
+test('ORA $2200,Y gets 0x69 from $220F and performs logical ORA on accumulator (0x29) to make 0x69 if Y == #$0F', function () {
   var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].ORA_ABSY, 0x00, 0x22]));
   cpu.store_byte(0x220F, 0x69);
   cpu.A = 0x29;
@@ -1345,6 +1345,93 @@ test('ROR $2200,X shifts $220F (0x30) right 1 bit halving the value to 0x60 if X
   cpu.X = 0x0F;
   cpu.execute();
   expect(cpu.read_byte(0x220F)).toBe(0x18);
+});
+/*=============================================*/
+
+/*    SBC
+/*=============================================*/
+
+test('SBC #$6A substracts 0x01 from accumulator (0x01) to make 0x01, unsetting C flag once consumed', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_IM, 0x01]));
+  cpu.A = 0x6A;
+  cpu.set_flag(_flag["default"].C);
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(false);
+});
+test('SBC #$6A substracts 0x01 from accumulator (0x02) with the Not of C flag to make 0xFF, setting C flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_IM, 0x01]));
+  cpu.A = 0x01;
+  cpu.execute();
+  expect(cpu.A).toBe(0xFF);
+  expect(cpu.check_flag(_flag["default"].C)).toBe(true);
+  expect(cpu.check_flag(_flag["default"].N)).toBe(true);
+});
+test('SBC #$6A substracts 0x01 from accumulator (0x01) to make 0x00, setting Z flag', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_IM, 0x01]));
+  cpu.A = 0x01;
+  cpu.set_flag(_flag["default"].C);
+  cpu.execute();
+  expect(cpu.A).toBe(0x00);
+  expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
+});
+test('SBC $80 gets 0x01 from ZP$80 and substracts from accumulator (0x6A), with C̅ to make 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_ZP, 0x80]));
+  cpu.store_byte(0x80, 0x01);
+  cpu.A = 0x6B;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('SBC $80,X gets 0x01 from $82 and substracts from accumulator (0x6A) with C̅ to make 0x69 if X == $02', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_ZPX, 0x80]));
+  cpu.store_byte(0x82, 0x01);
+  cpu.A = 0x6B;
+  cpu.X = 0x02;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('SBC $2200 gets 0x01 from $2200 and substracts from accumulator (0x6B) with C̅ to make 0x69', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_ABS, 0x00, 0x22]));
+  cpu.store_byte(0x2200, 0x01);
+  cpu.A = 0x6B;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('SBC $2200,X gets 0x01 from $220F and substracts from accumulator (0x6B) with C̅ to make 0x69 if X == #$0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_ABSX, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x01);
+  cpu.A = 0x6B;
+  cpu.X = 0x0F;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('SBC $2200,Y gets 0x01 from $220F and substracts from accumulator (0x6B) with C̅ to make 0x69 if Y == #$0F', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_ABSY, 0x00, 0x22]));
+  cpu.store_byte(0x220F, 0x01);
+  cpu.A = 0x6B;
+  cpu.Y = 0x0F;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('SBC ($20,X) gets 0x01 from $3074 and substracts from accumulator (0x6B) with C̅ to make 0x69 if X == 0x04', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_INDX, 0x20]));
+  cpu.store_byte(0x3074, 0x01);
+  cpu.store_byte(0x24, 0x74);
+  cpu.store_byte(0x25, 0x30);
+  cpu.A = 0x6B;
+  cpu.X = 0x04;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
+});
+test('SBC ($0),Y gets 0x01 from $0310 and substracts from accumulator (0x6B) with C̅ to make 0x69 if Y == 0x90', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SBC_INDY, 0x00]));
+  cpu.store_byte(0x0310, 0x01);
+  cpu.store_byte(0x00, 0x80);
+  cpu.store_byte(0x01, 0x02);
+  cpu.Y = 0x90;
+  cpu.A = 0x6B;
+  cpu.execute();
+  expect(cpu.A).toBe(0x69);
 });
 /*=============================================*/
 
