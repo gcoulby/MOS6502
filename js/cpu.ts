@@ -1,9 +1,9 @@
-// @ts-expect-error - not a module - but this allows Jest test
-import Flag from "./flag";
-// @ts-expect-error - not a module - but this allows Jest test
-import Instruction from  "./instruction";
-// @ts-expect-error - not a module - but this allows Jest test
-import Register from  "./register";
+// // @ts-expect-error - not a module - but this allows Jest test
+// import Flag from "./flag";
+// // @ts-expect-error - not a module - but this allows Jest test
+// import Instruction from "./instruction";
+// // @ts-expect-error - not a module - but this allows Jest test
+// import Register from "./register";
 
 class CPU {
     #PC: number;
@@ -29,43 +29,31 @@ class CPU {
     #P: number;
     public get P(): number { return this.#P; }
     public set P(v: number) { this.#P = this.intToByte(v); }
-    
-    public debug_stack : number[];
+
+    public debug_stack: number[];
 
     memory: Memory
     print_bytes: boolean = false;
-    brk_count :number = 0;
-    running : boolean = false;
 
     public constructor(memory: Memory, start_addr = 0x0600) {
-        // this.A = 0x00;
-        // this.X = 0x00;
-        // this.Y = 0x00;
-        // this.PC = 0xf000;
-        // this.SP = 0xff;
-        // this.P = Flag.CLR;     
-        // this.memory = memory;
-        // this.debug_stack = new Array();
         this.reset(memory, start_addr);
     }
 
-    public reset(memory: Memory, start_addr: number){
+    public reset(memory: Memory, start_addr: number) {
         this.A = 0x00;
         this.X = 0x00;
         this.Y = 0x00;
         this.PC = start_addr;
         this.SP = 0xff;
-        this.P = Flag.CLR;   
+        this.P = Flag.CLR;
         this.memory = memory;
         this.debug_stack = new Array();
     }
 
     public execute() {
-        // if(this.print_bytes){
-        //     console.log(this.memory.Data.slice(this.PC));
-        // }
         while (this.PC !== 0) {
-            if(this.print_bytes){
+            if (this.print_bytes) {
+                console.log(this.memory.Data.slice(this.PC));
                 console.log(`ADDR: ${this.PC.toString(16)}`);
             }
             let ins = this.fetch_byte();
@@ -95,19 +83,19 @@ class CPU {
                     break;
                 case Instruction.ADC_ABSX: // ADC $2200,X
                 case Instruction.ADC_ABSY: // ADC $2200,Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_absolute_XY(add_register);
                     this.A = this.add_with_carry(byte, byte2);
                     break;
                 case Instruction.ADC_INDX: // ADC ($80,X)
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indexed_indirect_X(add_register);
                     this.A = this.add_with_carry(byte, byte2);
                     break;
                 case Instruction.ADC_INDY: // ADC ($80),Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indirect_indexed_Y(add_register);
                     this.A = this.add_with_carry(byte, byte2);
@@ -141,21 +129,21 @@ class CPU {
                     break;
                 case Instruction.AND_ABSX: // AND $2200,Y
                 case Instruction.AND_ABSY: // AND $2200,Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_absolute_XY(add_register);
                     this.A = this.logical_and(byte, byte2);
                     this.set_NZ_flags(this.A);
                     break;
                 case Instruction.AND_INDX: // AND ($80,X)
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indexed_indirect_X(add_register);
                     this.A = this.logical_and(byte, byte2);
                     this.set_NZ_flags(this.A);
                     break;
                 case Instruction.AND_INDY: // AND ($80),Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indirect_indexed_Y(add_register);
                     this.A = this.logical_and(byte, byte2);
@@ -174,7 +162,7 @@ class CPU {
                     this.store_byte(zp_addr, shift);
                     break;
                 case Instruction.ASL_ZPX: // ASL $80,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var zp_addr = this.intToByte(this.read_byte(this.PC) + this.X);
                     var byte = this.get_byte_from_zero_page_add_XY(add_register);
                     var shift = this.shift_left(byte);
@@ -187,7 +175,7 @@ class CPU {
                     this.store_byte(abs_addr, shift);
                     break;
                 case Instruction.ASL_ABSX: // ASL $2200,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);  
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var abs_addr = this.intToWord(this.read_word(this.PC) + this.X);
                     var byte = this.get_byte_absolute_XY(add_register);
                     var shift = this.shift_left(byte);
@@ -199,15 +187,15 @@ class CPU {
                 case Instruction.BCC: // BCC 
                     var carry_clear = !this.check_flag(Flag.C);
                     this.branch_if_true(carry_clear);
-                    break; 
+                    break;
                 case Instruction.BCS: // BCS 
                     var carry_set = this.check_flag(Flag.C);
                     this.branch_if_true(carry_set);
-                    break; 
+                    break;
                 case Instruction.BEQ: // BEQ 
                     var zero = this.check_flag(Flag.Z);
                     this.branch_if_true(zero);
-                    break; 
+                    break;
                 case Instruction.BIT_ZP: // BIT $80
                     var byte1 = this.A;
                     var byte2 = this.get_byte_from_zero_page();
@@ -221,15 +209,15 @@ class CPU {
                 case Instruction.BMI: // BMI 
                     var negative = this.check_flag(Flag.N);
                     this.branch_if_true(negative);
-                    break; 
+                    break;
                 case Instruction.BNE: // BMI 
                     var zero = !this.check_flag(Flag.Z);
                     this.branch_if_true(zero);
-                    break; 
+                    break;
                 case Instruction.BPL: // BMI 
                     var positive = !this.check_flag(Flag.N);
                     this.branch_if_true(positive);
-                    break; 
+                    break;
                 case Instruction.BRK: // BRK
                     this.push_PC_to_stack();
                     this.push_to_stack(this.P);
@@ -239,11 +227,11 @@ class CPU {
                 case Instruction.BVC: // BVC 
                     var overflow = !this.check_flag(Flag.V);
                     this.branch_if_true(overflow);
-                    break; 
+                    break;
                 case Instruction.BVS: // BVS 
                     var overflow = this.check_flag(Flag.V);
                     this.branch_if_true(overflow);
-                    break; 
+                    break;
                 case Instruction.CLC: // CLC
                     this.clear_flag(Flag.C);
                     break;
@@ -362,21 +350,21 @@ class CPU {
                     break;
                 case Instruction.EOR_ABSX: // EOR $2200,Y
                 case Instruction.EOR_ABSY: // EOR $2200,Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_absolute_XY(add_register);
                     this.A = this.xor(byte, byte2);
                     this.set_NZ_flags(this.A);
                     break;
                 case Instruction.EOR_INDX: // EOR ($80,X)
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indexed_indirect_X(add_register);
                     this.A = this.xor(byte, byte2);
                     this.set_NZ_flags(this.A);
                     break;
                 case Instruction.EOR_INDY: // EOR ($80),Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indirect_indexed_Y(add_register);
                     this.A = this.xor(byte, byte2);
@@ -494,7 +482,7 @@ class CPU {
                     this.store_byte(zp_addr, shift);
                     break;
                 case Instruction.LSR_ZPX: // LSR $80,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var zp_addr = this.intToByte(this.read_byte(this.PC) + this.X);
                     var byte = this.get_byte_from_zero_page_add_XY(add_register);
                     var shift = this.shift_right(byte);
@@ -507,7 +495,7 @@ class CPU {
                     this.store_byte(abs_addr, shift);
                     break;
                 case Instruction.LSR_ABSX: // LSR $2200,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);  
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var abs_addr = this.intToWord(this.read_word(this.PC) + this.X);
                     var byte = this.get_byte_absolute_XY(add_register);
                     var shift = this.shift_right(byte);
@@ -548,21 +536,21 @@ class CPU {
                     break;
                 case Instruction.ORA_ABSX: // ORA $2200,X
                 case Instruction.ORA_ABSY: // ORA $2200,Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_absolute_XY(add_register);
                     this.A = this.logical_or(byte, byte2);
                     this.set_NZ_flags(this.A);
                     break;
                 case Instruction.ORA_INDX: // ORA ($80,X)
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indexed_indirect_X(add_register);
                     this.A = this.logical_or(byte, byte2);
                     this.set_NZ_flags(this.A);
                     break;
                 case Instruction.ORA_INDY: // ORA ($80),Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indirect_indexed_Y(add_register);
                     this.A = this.logical_or(byte, byte2);
@@ -598,7 +586,7 @@ class CPU {
                     this.store_byte(zp_addr, shift);
                     break;
                 case Instruction.ROL_ZPX: // ROL $80,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var zp_addr = this.intToByte(this.read_byte(this.PC) + this.X);
                     var byte = this.get_byte_from_zero_page_add_XY(add_register);
                     var old_carry = (this.P & Flag.C);
@@ -613,7 +601,7 @@ class CPU {
                     this.store_byte(abs_addr, shift);
                     break;
                 case Instruction.ROL_ABSX: // ROL $2200,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);  
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var abs_addr = this.intToWord(this.read_word(this.PC) + this.X);
                     var byte = this.get_byte_absolute_XY(add_register);
                     var old_carry = (this.P & Flag.C);
@@ -635,7 +623,7 @@ class CPU {
                     this.store_byte(zp_addr, shift);
                     break;
                 case Instruction.ROR_ZPX: // ROR $80,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var zp_addr = this.intToByte(this.read_byte(this.PC) + this.X);
                     var byte = this.get_byte_from_zero_page_add_XY(add_register);
                     var old_carry = (this.P & Flag.C);
@@ -650,7 +638,7 @@ class CPU {
                     this.store_byte(abs_addr, shift);
                     break;
                 case Instruction.ROR_ABSX: // ROR $2200,X
-                    var add_register = this.get_reg_from_instruction(ins, -1);  
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var abs_addr = this.intToWord(this.read_word(this.PC) + this.X);
                     var byte = this.get_byte_absolute_XY(add_register);
                     var old_carry = (this.P & Flag.C);
@@ -689,19 +677,19 @@ class CPU {
                     break;
                 case Instruction.SBC_ABSX: // SBC $2200,X
                 case Instruction.SBC_ABSY: // SBC $2200,Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_absolute_XY(add_register);
                     this.A = this.subtract_with_carry(byte, byte2);
                     break;
                 case Instruction.SBC_INDX: // SBC ($80,X)
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indexed_indirect_X(add_register);
                     this.A = this.subtract_with_carry(byte, byte2);
                     break;
                 case Instruction.SBC_INDY: // SBC ($80),Y
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     var byte = this.A;
                     var byte2 = this.get_byte_indirect_indexed_Y(add_register);
                     this.A = this.subtract_with_carry(byte, byte2);
@@ -748,13 +736,13 @@ class CPU {
                     break;
                 case Instruction.STA_INDX: // STA ($2200,X)   
                     var register = this.get_reg_from_instruction(ins, 2);
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
                     this.store_register_indexed_indirect_X(register, add_register);
                     break;
                 case Instruction.STA_INDY: // STA (£2200),Y   
                     var register = this.get_reg_from_instruction(ins, 2);
-                    var add_register = this.get_reg_from_instruction(ins, -1);    
-                    this.store_register_indirect_indexed_Y(register, add_register);    
+                    var add_register = this.get_reg_from_instruction(ins, -1);
+                    this.store_register_indirect_indexed_Y(register, add_register);
                     break;
                 case Instruction.TAX: // TAX   
                 case Instruction.TAY: // TAY
@@ -778,16 +766,16 @@ class CPU {
     /*================================================*/
     /*            Helpers    
     /*================================================*/
-    private intToByte(n: number) : number{
+    private intToByte(n: number): number {
         return n & 0xFF;
     }
 
-    private intToWord(n: number) : number{
+    private intToWord(n: number): number {
         return n & 0xFFFF;
     }
 
-    private get_reg_from_instruction(ins : Instruction, str_start_pos, register_str_length = 1) : string{
-        var ins_str : string = Instruction[<Instruction>ins].toString();
+    private get_reg_from_instruction(ins: Instruction, str_start_pos, register_str_length = 1): string {
+        var ins_str: string = Instruction[<Instruction>ins].toString();
         let out = ins_str.substr(str_start_pos, register_str_length);
         return out;
     }
@@ -799,16 +787,16 @@ class CPU {
         return (this.P & flag) > 0;
     }
 
-    public set_flag(flag: number, set: boolean = true){
-        if(set){
+    public set_flag(flag: number, set: boolean = true) {
+        if (set) {
             this.P |= flag;
         }
-        else{
+        else {
             this.P &= ~flag;
         }
     }
 
-    private clear_flag(flag: number){
+    private clear_flag(flag: number) {
         this.set_flag(flag, false);
     }
 
@@ -817,90 +805,49 @@ class CPU {
         this.set_flag(Flag.Z, this.check_if_zero(value));
     }
 
-    // private set_N_flag(value: number){
-    //     this.set_flag_boolen(Flag.N, (value & Flag.N) > 0)
-    // }
-
-    // private set_V_flag(old_byte: number, new_byte: number){
-    //     let b1 = (old_byte & Flag.N); 
-    //     let b2 = (new_byte & Flag.N);
-    //     this.set_flag_boolen(Flag.V, b1 != b2);
-    // }
-
-    // private set_B_flag(set: boolean){
-    //     this.set_flag_boolen(Flag.B, set);
-    // }
-
-    // private set_D_flag(set: boolean){
-    //     this.set_flag_boolen(Flag.D, set);
-    // }
-
-    // private set_I_flag(set: boolean){
-    //     this.set_flag_boolen(Flag.I, set);
-    // }
-
-    // private set_Z_flag(value: number){
-    //     //value > 0
-    //     if (value) { 
-    //         this.P &= ~Flag.Z; // set NOT (~) z flag (z = 0)
-    //     } else { //value == 0
-    //         this.P |= Flag.Z;
-    //     }
-    // }
-
-    // private set_C_flag(old_byte: number, new_byte: number){
-    //     //Check Overflow
-    //     let b1 = (old_byte & Flag.N); 
-    //     let b2 = (new_byte & Flag.N);
-    //     //Check Underflow
-    //     let b3 = (old_byte & Flag.C); 
-    //     let b4 = (new_byte & Flag.C);
-    //     this.set_flag_boolen(Flag.C, (b1 != b2) || (b3 != b4));
-    // }
-
-    private check_if_negative(value: number): boolean{
+    private check_if_negative(value: number): boolean {
         return (value & Flag.N) > 0;
     }
 
-    private check_if_zero(value: number): boolean{
+    private check_if_zero(value: number): boolean {
         return value == 0;
     }
 
-    private check_overflow(old_byte: number, new_byte: number): boolean{
+    private check_overflow(old_byte: number, new_byte: number): boolean {
         return old_byte > new_byte;
     }
 
-    private check_underflow(old_byte: number, new_byte: number): boolean{
+    private check_underflow(old_byte: number, new_byte: number): boolean {
         return old_byte < new_byte;
     }
-    
+
     /*================================================*/
     /*            Implied Instructions
     /*================================================*/
 
-    private decrement_register(register: string){
+    private decrement_register(register: string) {
         this[register]--;
     }
 
-    private increment_register(register: string){
+    private increment_register(register: string) {
         this[register]++;
     }
 
-    private decrement_memory(addr: number){
-        let result = this.intToByte(this.read_byte(addr)-1);
+    private decrement_memory(addr: number) {
+        let result = this.intToByte(this.read_byte(addr) - 1);
         this.store_byte(addr, result);
         this.set_flag(Flag.Z, this.check_if_zero(result));
         this.set_flag(Flag.N, this.check_if_negative(result));
     }
 
-    private increment_memory(addr: number){
-        let result = this.intToByte(this.read_byte(addr)+1);
+    private increment_memory(addr: number) {
+        let result = this.intToByte(this.read_byte(addr) + 1);
         this.store_byte(addr, result);
         this.set_flag(Flag.Z, this.check_if_zero(result));
         this.set_flag(Flag.N, this.check_if_negative(result));
     }
-    
-    private no_operation(){
+
+    private no_operation() {
         this.increment_register(Register.PC);
     }
 
@@ -908,31 +855,31 @@ class CPU {
     /*            Stack  
     /*================================================*/
 
-    private get_current_stack_addr(){
+    private get_current_stack_addr() {
         return 0x0100 + this.SP;
     }
 
-    public push_to_stack(byte: number){
+    public push_to_stack(byte: number) {
         let addr = this.get_current_stack_addr();
         this.store_byte(addr, byte);
         this.decrement_register(Register.SP);
     }
 
-    private push_PC_to_stack(){
+    private push_PC_to_stack() {
         let addr = this.PC - 1;
         this.push_to_stack((addr >> 8) & 0xFF);
         this.push_to_stack(addr & 0xFF);
         // console.log(addr);
     }
 
-    public pull_from_stack(): number{
+    public pull_from_stack(): number {
         this.increment_register(Register.SP);
         let addr = this.get_current_stack_addr();
         let b = this.read_byte(addr);
-        return b; 
+        return b;
     }
 
-    private pull_PC_from_stack():number{
+    private pull_PC_from_stack(): number {
         var low_order = this.pull_from_stack();
         var high_order = this.pull_from_stack() << 8;
         return this.intToWord(high_order + low_order + 1);
@@ -942,51 +889,38 @@ class CPU {
     /*            Operations   
     /*================================================*/
 
-    // private set_carry_flag(new_byte: number, old_byte: number){
-    //     if (new_byte < old_byte) { 
-    //         this.P |= Flag.C;
-    //     } else { //value == 0
-    //         this.P &= ~Flag.C; // set NOT (~) z flag (z = 0)
-    //     }
-    // }
 
-    // private check_for_overflow(old_byte: number, new_byte: number){
-    //     let b1 = old_byte & Flag.N;
-    //     let b2 = new_byte & Flag.N;
-    //     return b1 != b2;
-    // }
-
-    private add_with_carry(byte1:number, byte2:number){
+    private add_with_carry(byte1: number, byte2: number) {
         let carry = this.check_flag(Flag.C) ? 1 : 0;
         let result = this.intToByte(byte1 + byte2 + carry);
         let carryCheck = this.check_overflow(byte1, result);
         this.set_flag(Flag.C, carryCheck);
         this.set_NZ_flags(result);
-        return result; 
+        return result;
     }
 
-    private subtract_with_carry(byte1:number, byte2:number){
+    private subtract_with_carry(byte1: number, byte2: number) {
         let carry = this.check_flag(Flag.C) ? 0 : 1;
         let result = this.intToByte(byte1 - byte2 - carry);
         let carryCheck = this.check_underflow(byte1, result);
         this.set_flag(Flag.C, carryCheck);
         this.set_NZ_flags(result);
-        return result; 
+        return result;
     }
 
-    private logical_and(byte1:number, byte2:number){
+    private logical_and(byte1: number, byte2: number) {
         return this.intToByte(byte1 & byte2);
     }
 
-    private logical_or(byte1:number, byte2:number){
+    private logical_or(byte1: number, byte2: number) {
         return this.intToByte(byte1 | byte2);
     }
 
-    private xor(byte1:number, byte2:number){
+    private xor(byte1: number, byte2: number) {
         return this.intToByte(byte1 ^ byte2);
     }
 
-    private bit_test(byte1: number, byte2: number){
+    private bit_test(byte1: number, byte2: number) {
         var bit_test = this.logical_and(byte1, byte2) > 0;
         var negative = this.logical_and(byte2, Flag.N) > 0;
         var overflow = this.logical_and(byte2, Flag.V) > 0;
@@ -995,7 +929,7 @@ class CPU {
         this.set_flag(Flag.V, overflow);
     }
 
-    private shift_left(byte:number){
+    private shift_left(byte: number) {
         let carryCheck = this.check_if_negative(byte)
         this.set_flag(Flag.C, carryCheck);
         let result = this.intToByte(byte << 1);
@@ -1003,7 +937,7 @@ class CPU {
         return result;
     }
 
-    private shift_right(byte:number){
+    private shift_right(byte: number) {
         let carryCheck = (byte & 0x01) > 0;
         this.set_flag(Flag.C, carryCheck);
         let result = this.intToByte(byte >> 1);
@@ -1011,7 +945,7 @@ class CPU {
         return result;
     }
 
-    private compare(byte1: number, byte2: number){
+    private compare(byte1: number, byte2: number) {
         let result = byte1 - byte2;
         this.set_flag(Flag.C, result >= 0);
         this.set_flag(Flag.Z, result == 0);
@@ -1022,9 +956,9 @@ class CPU {
     /*            Relative Instructions
     /*================================================*/
 
-    private branch_if_true(condition: boolean){
+    private branch_if_true(condition: boolean) {
         let offset = this.fetch_byte() - 128;
-        if(!condition) return;
+        if (!condition) return;
 
         this.PC += offset;
     }
@@ -1034,21 +968,21 @@ class CPU {
     /*================================================*/
     /*            Addressing     
     /*================================================*/
-    
-    private get_zero_page_addr(){
+
+    private get_zero_page_addr() {
         return this.fetch_byte();
     }
 
-    private get_zero_page_addr_add_XY(register: string){
+    private get_zero_page_addr_add_XY(register: string) {
         let addr = this.fetch_byte();
         return this.intToByte(addr + this[register]);
     }
 
-    private get_absolute_addr(){
+    private get_absolute_addr() {
         return this.fetch_word();
     }
 
-    private get_absolute_addr_add_XY(register: string){
+    private get_absolute_addr_add_XY(register: string) {
         let addr = this.fetch_word();
         return this.intToWord(addr + this[register]);
     }
@@ -1067,7 +1001,7 @@ class CPU {
 
         Absolute Address = $3074
     */
-    private get_indexed_indirect_addr_X(register: string){
+    private get_indexed_indirect_addr_X(register: string) {
         let zp_addr = this.get_zero_page_addr_add_XY(register);
         return this.read_word(zp_addr);
     }
@@ -1085,7 +1019,7 @@ class CPU {
 
         Absolute Address = $0310
     */
-    private get_indirect_indexed_addr_X(register: string){
+    private get_indirect_indexed_addr_X(register: string) {
         let zp_addr = this.get_zero_page_addr();
         let zp_b1 = this.read_byte(zp_addr);
         let low_order = this.intToByte(zp_b1 + this[register]);
@@ -1103,7 +1037,7 @@ class CPU {
         let data = this.read_byte(this.PC);
         this.increment_register(Register.PC);
         this.debug_stack.push(data);
-        if(this.print_bytes){
+        if (this.print_bytes) {
             console.log(`ADDR: ${this.PC.toString(16)}`);
             console.log(`BYTE: ${data.toString(16)}`);
         }
@@ -1127,36 +1061,36 @@ class CPU {
         return this.memory.get_word(addr);
     }
 
-    private get_byte_immediate(){
+    private get_byte_immediate() {
         return this.fetch_byte();
     }
 
-    private get_byte_from_zero_page(){
+    private get_byte_from_zero_page() {
         let addr = this.get_zero_page_addr();
         return this.read_byte(addr);
     }
 
-    private get_byte_from_zero_page_add_XY(register: string){
+    private get_byte_from_zero_page_add_XY(register: string) {
         let addr = this.get_zero_page_addr_add_XY(register);
         return this.read_byte(addr);
     }
 
-    private get_byte_absolute(){
+    private get_byte_absolute() {
         let addr = this.get_absolute_addr();
         return this.read_byte(addr);
     }
 
-    private get_byte_absolute_XY(register: string){
+    private get_byte_absolute_XY(register: string) {
         let addr = this.get_absolute_addr_add_XY(register);
         return this.read_byte(addr);
     }
 
-    private get_byte_indexed_indirect_X(register: string){
+    private get_byte_indexed_indirect_X(register: string) {
         let addr = this.get_indexed_indirect_addr_X(register);
         return this.read_byte(addr);
     }
 
-    private get_byte_indirect_indexed_Y(register: string){
+    private get_byte_indirect_indexed_Y(register: string) {
         let addr = this.get_indirect_indexed_addr_X(register);
         return this.read_byte(addr);
     }
@@ -1165,20 +1099,20 @@ class CPU {
     /*            Store Byte  
     /*================================================*/
 
-    private store_byte(addr: number, byte: number){
+    private store_byte(addr: number, byte: number) {
         this.memory.set(addr, byte);
     }
 
-    private load_byte_into_register(register: string, byte: number){
+    private load_byte_into_register(register: string, byte: number) {
         this[register] = byte;
     }
 
-    private store_register_zero_page(register: string){
+    private store_register_zero_page(register: string) {
         let addr = this.get_zero_page_addr();
         this.store_byte(addr, this[register]);
     }
 
-    private store_register_zero_page_add_XY(register: string, add_register: string){
+    private store_register_zero_page_add_XY(register: string, add_register: string) {
         let addr = this.get_zero_page_addr_add_XY(add_register);
         this.store_byte(addr, this[register]);
     }

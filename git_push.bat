@@ -1,8 +1,10 @@
 @echo off 
 
 set "message=%1"
-
-call yarn test --no-color 2>test_results.txt
+set test=%2
+if /I "%test%" EQU "test" (
+    call yarn test --no-color 2>test_results.txt
+)
 
 call git add .
 
