@@ -3,6 +3,7 @@ var memory_monitor : MemoryMonitor
 var cpu : CPU
 var code_editor : CodeEditor
 var display : Display
+var assembler :  Assembler;
 
 function int2Hex(n: number, pad: number, include_dollar: boolean = false): string{
     let s = "000" + n.toString(16);
@@ -20,10 +21,11 @@ function update(){
 }
 
 (function main(args : string[] = null){
+    code_editor = new CodeEditor();
+    assembler = new Assembler(code_editor);
     memory = new Memory();
     display = new Display(memory);
     cpu = new CPU(memory, display.end_addr + 1);
-    code_editor = new CodeEditor();
     console.log(cpu);
 
     memory_monitor = new MemoryMonitor(memory, cpu);

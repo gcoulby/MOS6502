@@ -202,7 +202,6 @@ var Instruction;
     Instruction[Instruction["TXA"] = 138] = "TXA";
     Instruction[Instruction["TXS"] = 154] = "TXS";
     Instruction[Instruction["TYA"] = 152] = "TYA";
-    Instruction[Instruction["STOP"] = 255] = "STOP";
 })(Instruction || (Instruction = {}));
 Object.freeze(Instruction);
 module.exports = Instruction;

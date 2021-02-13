@@ -22,10 +22,19 @@
         <!-- <h1 class="mt-5">MOS 6502</h1> -->
         <div class="container">
           <div class="row">
-            <textarea class="col-7 tab-support" id="code"></textarea>
+            <div class="col-7">
+              <textarea class="tab-support" id="code"></textarea>
+            </div>
 
             <div id="screen-surround" class="col-5">
               <canvas id="screen" style="background-color: black; width: 100%;"></canvas>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button id="assemble-btn" class="btn btn-primary">Assemble</button>
+              <button disabled class="btn btn-primary">Run Program</button>
+              <button disabled class="btn btn-primary">Step Program</button>
             </div>
           </div>
 
@@ -196,12 +205,13 @@
 
 
     <!-- Models and Enums -->
-    <script src="js/dist/extensions.js"></script>
+    <!-- <script src="js/dist/extensions.js"></script> -->
     <script src="js/dist/register.js"></script>
     <script src="js/dist/instruction.js"></script>
     <script src="js/dist/flag.js"></script>
 
     <!-- System Architecture Classes -->
+    <script src="js/dist/assembler.js"></script>
     <script src="js/dist/display.js"></script>
     <script src="js/dist/memory.js"></script>
     <script src="js/dist/cpu.js"></script>

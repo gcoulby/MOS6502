@@ -201,7 +201,6 @@ enum Instruction {
     TXA         = 0x8A,
     TXS         = 0x9A,
     TYA         = 0x98,
-    STOP        = 0xFF,
 }
 Object.freeze(Instruction);
 module.exports = Instruction;

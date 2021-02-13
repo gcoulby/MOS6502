@@ -7,7 +7,7 @@ class CodeEditor{
         - Integrated into TypeScript class
     */
     enabled : boolean
-    textarea: HTMLInputElement
+    public textarea: HTMLInputElement
     constructor(){
         this.textarea = <HTMLInputElement>document.getElementById("code");
         this.textarea.height = ctx.canvas.height;

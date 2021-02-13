@@ -3,6 +3,7 @@ var memory_monitor;
 var cpu;
 var code_editor;
 var display;
+var assembler;
 function int2Hex(n, pad, include_dollar = false) {
     let s = "000" + n.toString(16);
     let hex = s.substr(s.length - pad).toUpperCase();
@@ -16,10 +17,11 @@ function update() {
     display.update();
 }
 (function main(args = null) {
+    code_editor = new CodeEditor();
+    assembler = new Assembler(code_editor);
     memory = new Memory();
     display = new Display(memory);
     cpu = new CPU(memory, display.end_addr + 1);
-    code_editor = new CodeEditor();
     console.log(cpu);
     memory_monitor = new MemoryMonitor(memory, cpu);
     memory_monitor.bank_select();
