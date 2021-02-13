@@ -14,7 +14,8 @@ function get_CPU() {
   var PC = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
   var program = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
   var print_bytes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  var cpu = new _cpu["default"]();
+  var cpu = new _cpu["default"](); // cpu.reset();
+
   cpu.memory = new _memory["default"]();
 
   if (PC != undefined) {
@@ -249,14 +250,14 @@ test('INY increments the Y register setting Negative flag when incremented from 
   expect(cpu.check_flag(_flag["default"].N)).toBe(true);
 });
 test('PHA pushes $69 from the accumulator to the stack and decrements the stack pointer', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].PHA]));
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].PHA, _instruction["default"].JMP_ABS, 0x00, 0x00]));
   cpu.A = 0x69;
   cpu.execute();
   expect(cpu.memory.get(0x01FF)).toBe(0x69);
   expect(cpu.SP).toBe(0xFE);
 });
 test('PHP pushes the Processor status the stack and decrements the stack pointer', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].PHP]));
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].PHP, _instruction["default"].JMP_ABS, 0x00, 0x00]));
   cpu.set_flag(_flag["default"].C);
   cpu.set_flag(_flag["default"].Z);
   cpu.execute();
@@ -264,13 +265,13 @@ test('PHP pushes the Processor status the stack and decrements the stack pointer
   expect(cpu.SP).toBe(0xFE);
 });
 test('PLA pulls $69 from the stack, sets accumulator and decrements the stack pointer', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].LDA_IM, 0x69, _instruction["default"].PHA, _instruction["default"].LDA_IM, 0x00, _instruction["default"].PLA]));
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].LDA_IM, 0x69, _instruction["default"].PHA, _instruction["default"].LDA_IM, 0x00, _instruction["default"].PLA, _instruction["default"].JMP_ABS, 0x00, 0x00]));
   cpu.execute();
   expect(cpu.A).toBe(0x69);
   expect(cpu.SP).toBe(0xFF);
 });
 test('PLP pulls Processor status from the stack, sets the P Register and decrements the stack pointer', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SEC, _instruction["default"].SED, _instruction["default"].SEI, _instruction["default"].PHP, _instruction["default"].CLC, _instruction["default"].CLD, _instruction["default"].CLI, _instruction["default"].PLP]));
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].SEC, _instruction["default"].SED, _instruction["default"].SEI, _instruction["default"].PHP, _instruction["default"].CLC, _instruction["default"].CLD, _instruction["default"].CLI, _instruction["default"].PLP, _instruction["default"].JMP_ABS, 0x00, 0x00]));
   cpu.execute();
   expect(cpu.check_flag(_flag["default"].C)).toBe(true);
   expect(cpu.check_flag(_flag["default"].D)).toBe(true);
@@ -973,13 +974,13 @@ test('JMP ($3000) JMPS back to a $3000 and reads two bytes which provide the jum
   expect(cpu.A).toBe(0x69);
 });
 test('JSR ($3000) skips over setting A to 0x00 by jumping to subroutine at $3000, setting X to 0x69 adding the PC-1 to stack', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].JSR, 0x05, 0xF0, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69]));
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].JSR, 0x05, 0xF0, _instruction["default"].LDA_IM, 0x00, _instruction["default"].LDX_IM, 0x69, _instruction["default"].JMP_ABS, 0x00, 0x00]));
   cpu.A = 0x69;
   cpu.X = 0x00;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
   expect(cpu.X).toBe(0x69);
-  var byte_check = [_instruction["default"].JSR, 0x05, 0xF0, _instruction["default"].LDX_IM, 0x69];
+  var byte_check = [_instruction["default"].JSR, 0x05, 0xF0, _instruction["default"].LDX_IM, 0x69, _instruction["default"].JMP_ABS, 0x00, 0x00];
   expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check);
   var low_order = cpu.pull_from_stack();
   var high_order = cpu.pull_from_stack() << 8;
@@ -1560,7 +1561,7 @@ test('TAY transfers 0x00 from Register A to Register Y setting Z flag', function
   expect(cpu.check_flag(_flag["default"].Z)).toBe(true);
 });
 test('TSX transfers stack pointer to Register X', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].TSX]));
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].TSX, _instruction["default"].JMP_ABS, 0x00, 0x00]));
   cpu.execute();
   expect(cpu.X).toBe(cpu.SP);
 });
@@ -1572,7 +1573,7 @@ test('TXA transfers 0x00 from Register X to Register A', function () {
   expect(cpu.A).toBe(0x69);
 });
 test('TXS transfers Register X to stack pointer', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].TXS]));
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].TXS, _instruction["default"].JMP_ABS, 0x00, 0x00]));
   cpu.X = 0x69;
   cpu.execute();
   expect(cpu.SP).toBe(0x69);
@@ -1583,4 +1584,28 @@ test('TYA transfers 0x69 from Register Y to Register A', function () {
   cpu.Y = 0x69;
   cpu.execute();
   expect(cpu.A).toBe(0x69);
+});
+/*=============================================*/
+
+/*    Interrupts
+/*=============================================*/
+
+test('BRK stops the program from running', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BRK]), true);
+  cpu.execute();
+  var byte_check = [_instruction["default"].BRK];
+  expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check);
+  expect(cpu.read_byte(0x01FF)).toBe(0xF0);
+  expect(cpu.read_byte(0x01FE)).toBe(0x00);
+});
+test('RTI pulls the PC+1 and Program status from the stack', function () {
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].RTI, _instruction["default"].JMP_ABS, 0x00, 0x00]));
+  cpu.push_to_stack(0x22);
+  cpu.push_to_stack(0x00);
+  cpu.push_to_stack((_flag["default"].CLR | _flag["default"].C) & 0xFF);
+  var P = cpu.pull_from_stack();
+  var PC = cpu.pull_PC_from_stack();
+  cpu.execute();
+  expect(P).toBe((_flag["default"].CLR | _flag["default"].C) & 0xFF);
+  expect(PC).toBe(0x2201);
 });

@@ -147,6 +147,8 @@ enum Instruction {
     PLA         = 0x68,
     //PHA - Push Accumulator to Stack
     PLP         = 0x28,
+    //RTI - Return from Interrupt
+    RTI         = 0x40,
     //RTS - Return from Subroutine
     RTS         = 0x60,
     //ROL - Rotate Left

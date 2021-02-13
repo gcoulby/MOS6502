@@ -21,7 +21,7 @@ const instruction_1 = require("./instruction");
 // @ts-expect-error - not a module - but this allows Jest test
 const register_1 = require("./register");
 class CPU {
-    constructor(memory) {
+    constructor(memory, start_addr = 0x0600) {
         _PC.set(this, void 0);
         _SP.set(this, void 0);
         _A.set(this, void 0);
@@ -30,14 +30,16 @@ class CPU {
         _P.set(this, void 0);
         this.print_bytes = false;
         this.brk_count = 0;
-        this.A = 0x00;
-        this.X = 0x00;
-        this.Y = 0x00;
-        this.PC = 0xf000;
-        this.SP = 0xff;
-        this.P = flag_1.default.CLR;
-        this.memory = memory;
-        this.debug_stack = new Array();
+        this.running = false;
+        // this.A = 0x00;
+        // this.X = 0x00;
+        // this.Y = 0x00;
+        // this.PC = 0xf000;
+        // this.SP = 0xff;
+        // this.P = Flag.CLR;     
+        // this.memory = memory;
+        // this.debug_stack = new Array();
+        this.reset(memory, start_addr);
     }
     get PC() { return __classPrivateFieldGet(this, _PC); }
     set PC(v) { __classPrivateFieldSet(this, _PC, this.intToWord(v)); }
@@ -51,18 +53,25 @@ class CPU {
     set Y(v) { __classPrivateFieldSet(this, _Y, this.intToByte(v)); }
     get P() { return __classPrivateFieldGet(this, _P); }
     set P(v) { __classPrivateFieldSet(this, _P, this.intToByte(v)); }
+    reset(memory, start_addr) {
+        this.A = 0x00;
+        this.X = 0x00;
+        this.Y = 0x00;
+        this.PC = start_addr;
+        this.SP = 0xff;
+        this.P = flag_1.default.CLR;
+        this.memory = memory;
+        this.debug_stack = new Array();
+    }
     execute() {
-        //TODO: stop when the program finishes
-        if (this.print_bytes) {
-            console.log(this.memory.Data.slice(this.PC));
-        }
+        // if(this.print_bytes){
+        //     console.log(this.memory.Data.slice(this.PC));
+        // }
         while (this.PC !== 0) {
             if (this.print_bytes) {
                 console.log(`ADDR: ${this.PC.toString(16)}`);
             }
             let ins = this.fetch_byte();
-            if (ins > 0 && this.brk_count > 0)
-                this.brk_count = 0;
             switch (ins) {
                 /*===========*/
                 /*  ADC
@@ -224,13 +233,11 @@ class CPU {
                     var positive = !this.check_flag(flag_1.default.N);
                     this.branch_if_true(positive);
                     break;
-                //TODO : BRK
                 case instruction_1.default.BRK: // BRK
-                    //TODO: Clearing flag causings issues
-                    // this.clear_flag(Flag.D);
-                    if (this.brk_count % 3 == 0)
-                        return;
-                    this.brk_count++;
+                    this.push_PC_to_stack();
+                    this.push_to_stack(this.P);
+                    this.clear_flag(flag_1.default.D);
+                    this.PC = 0;
                     break;
                 case instruction_1.default.BVC: // BVC 
                     var overflow = !this.check_flag(flag_1.default.V);
@@ -414,11 +421,7 @@ class CPU {
                     break;
                 case instruction_1.default.JSR: // JSR ($2200)
                     var addr = this.get_absolute_addr();
-                    var current_addr = this.PC - 1;
-                    var high_order = this.intToByte(current_addr >> 8);
-                    this.push_to_stack(high_order);
-                    var low_order = this.intToByte(current_addr);
-                    this.push_to_stack(low_order);
+                    this.push_PC_to_stack();
                     this.PC = addr;
                     break;
                 /*===========*/
@@ -427,9 +430,6 @@ class CPU {
                 case instruction_1.default.LDA_IM: // LDA #$80
                 case instruction_1.default.LDX_IM: // LDX #$80
                 case instruction_1.default.LDY_IM: // LDY #$80
-                    if (this.print_bytes) {
-                        console.log(`LDA_IM`);
-                    }
                     var register = this.get_reg_from_instruction(ins, 2);
                     var byte = this.get_byte_immediate();
                     this.set_NZ_flags(byte);
@@ -660,11 +660,12 @@ class CPU {
                     var shift = this.shift_right(byte) | old_carry;
                     this.store_byte(abs_addr, shift);
                     break;
-                //TODO : RTI
+                case instruction_1.default.RTI:
+                    this.P = this.pull_from_stack();
+                    this.PC = this.pull_PC_from_stack();
+                    break; // TODO: Test RTI
                 case instruction_1.default.RTS:
-                    var low_order = this.pull_from_stack();
-                    var high_order = this.pull_from_stack() << 8;
-                    this.PC = this.intToWord(high_order + low_order + 1);
+                    this.PC = this.pull_PC_from_stack();
                     break;
                 /*===========*/
                 /*  SBC
@@ -892,11 +893,22 @@ class CPU {
         this.store_byte(addr, byte);
         this.decrement_register(register_1.default.SP);
     }
+    push_PC_to_stack() {
+        let addr = this.PC - 1;
+        this.push_to_stack((addr >> 8) & 0xFF);
+        this.push_to_stack(addr & 0xFF);
+        // console.log(addr);
+    }
     pull_from_stack() {
         this.increment_register(register_1.default.SP);
         let addr = this.get_current_stack_addr();
         let b = this.read_byte(addr);
         return b;
+    }
+    pull_PC_from_stack() {
+        var low_order = this.pull_from_stack();
+        var high_order = this.pull_from_stack() << 8;
+        return this.intToWord(high_order + low_order + 1);
     }
     /*================================================*/
     /*            Operations

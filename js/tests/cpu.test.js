@@ -5,6 +5,7 @@ import CPU from '../cpu';
 
 function get_CPU(PC = undefined, program = undefined, print_bytes = false){
     var cpu = new CPU();
+    // cpu.reset();
     cpu.memory = new Memory();
     if(PC != undefined){
         cpu.PC = PC;
@@ -259,7 +260,7 @@ test('INY increments the Y register setting Negative flag when incremented from 
 });
 
 test('PHA pushes $69 from the accumulator to the stack and decrements the stack pointer', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.PHA]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.PHA, Instruction.JMP_ABS, 0x00, 0x00]));
     cpu.A = 0x69;
     cpu.execute();
     expect(cpu.memory.get(0x01FF)).toBe(0x69);
@@ -267,7 +268,7 @@ test('PHA pushes $69 from the accumulator to the stack and decrements the stack 
 });
 
 test('PHP pushes the Processor status the stack and decrements the stack pointer', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.PHP]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.PHP, Instruction.JMP_ABS, 0x00, 0x00]));
     cpu.set_flag(Flag.C);
     cpu.set_flag(Flag.Z);
     cpu.execute();
@@ -276,14 +277,14 @@ test('PHP pushes the Processor status the stack and decrements the stack pointer
 });
 
 test('PLA pulls $69 from the stack, sets accumulator and decrements the stack pointer', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LDA_IM, 0x69, Instruction.PHA, Instruction.LDA_IM, 0x00, Instruction.PLA]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.LDA_IM, 0x69, Instruction.PHA, Instruction.LDA_IM, 0x00, Instruction.PLA, Instruction.JMP_ABS, 0x00, 0x00]));
     cpu.execute();
     expect(cpu.A).toBe(0x69);
     expect(cpu.SP).toBe(0xFF);
 });
 
 test('PLP pulls Processor status from the stack, sets the P Register and decrements the stack pointer', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.SEC, Instruction.SED, Instruction.SEI, Instruction.PHP, Instruction.CLC, Instruction.CLD, Instruction.CLI, Instruction.PLP]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.SEC, Instruction.SED, Instruction.SEI, Instruction.PHP, Instruction.CLC, Instruction.CLD, Instruction.CLI, Instruction.PLP, Instruction.JMP_ABS, 0x00, 0x00]));
     cpu.execute();
     expect(cpu.check_flag(Flag.C)).toBe(true);
     expect(cpu.check_flag(Flag.D)).toBe(true);
@@ -1058,13 +1059,13 @@ test('JMP ($3000) JMPS back to a $3000 and reads two bytes which provide the jum
 });
 
 test('JSR ($3000) skips over setting A to 0x00 by jumping to subroutine at $3000, setting X to 0x69 adding the PC-1 to stack', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.JSR, 0x05, 0xF0, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.JSR, 0x05, 0xF0, Instruction.LDA_IM, 0x00, Instruction.LDX_IM, 0x69, Instruction.JMP_ABS, 0x00, 0x00]));
     cpu.A = 0x69;
     cpu.X = 0x00;
     cpu.execute();
     expect(cpu.A).toBe(0x69);
     expect(cpu.X).toBe(0x69);
-    let byte_check = [Instruction.JSR, 0x05, 0xF0, Instruction.LDX_IM, 0x69];
+    let byte_check = [Instruction.JSR, 0x05, 0xF0, Instruction.LDX_IM, 0x69, Instruction.JMP_ABS, 0x00, 0x00];
     expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check)
     let low_order = cpu.pull_from_stack();
     let high_order = cpu.pull_from_stack() << 8;
@@ -1715,7 +1716,7 @@ test('TAY transfers 0x00 from Register A to Register Y setting Z flag', () => {
 });
 
 test('TSX transfers stack pointer to Register X', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.TSX]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.TSX, Instruction.JMP_ABS, 0x00, 0x00]));
     cpu.execute();
     expect(cpu.X).toBe(cpu.SP);
 });
@@ -1730,7 +1731,7 @@ test('TXA transfers 0x00 from Register X to Register A', () => {
 });
 
 test('TXS transfers Register X to stack pointer', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.TXS]));
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.TXS, Instruction.JMP_ABS, 0x00, 0x00]));
     cpu.X = 0x69;
     cpu.execute();
     expect(cpu.SP).toBe(0x69);
@@ -1742,4 +1743,39 @@ test('TYA transfers 0x69 from Register Y to Register A', () => {
     cpu.Y = 0x69;
     cpu.execute();
     expect(cpu.A).toBe(0x69);
+});
+
+
+/*=============================================*/
+/*    Interrupts
+/*=============================================*/
+
+
+
+
+
+
+
+test('BRK stops the program from running', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BRK]), true);
+    cpu.execute();  
+    let byte_check = [Instruction.BRK];
+    expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check);
+    expect(cpu.read_byte(0x01FF)).toBe(0xF0);
+    expect(cpu.read_byte(0x01FE)).toBe(0x00);
+    
+});
+
+
+
+test('RTI pulls the PC+1 and Program status from the stack', () => {
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.RTI, Instruction.JMP_ABS, 0x00, 0x00]));
+    cpu.push_to_stack(0x22);
+    cpu.push_to_stack(0x00);
+    cpu.push_to_stack((Flag.CLR | Flag.C) & 0xFF);
+    let P = cpu.pull_from_stack();
+    let PC = cpu.pull_PC_from_stack();
+    cpu.execute();
+    expect(P).toBe((Flag.CLR | Flag.C) & 0xFF);
+    expect(PC).toBe(0x2201);
 });

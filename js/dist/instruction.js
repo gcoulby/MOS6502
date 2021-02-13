@@ -148,6 +148,8 @@ var Instruction;
     Instruction[Instruction["PLA"] = 104] = "PLA";
     //PHA - Push Accumulator to Stack
     Instruction[Instruction["PLP"] = 40] = "PLP";
+    //RTI - Return from Interrupt
+    Instruction[Instruction["RTI"] = 64] = "RTI";
     //RTS - Return from Subroutine
     Instruction[Instruction["RTS"] = 96] = "RTS";
     //ROL - Rotate Left

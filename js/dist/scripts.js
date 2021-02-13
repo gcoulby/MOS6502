@@ -17,8 +17,8 @@ function update() {
 }
 (function main(args = null) {
     memory = new Memory();
-    cpu = new CPU(memory);
     display = new Display(memory);
+    cpu = new CPU(memory, display.end_addr + 1);
     code_editor = new CodeEditor();
     console.log(cpu);
     memory_monitor = new MemoryMonitor(memory, cpu);
