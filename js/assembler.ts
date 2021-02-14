@@ -46,7 +46,7 @@ class Assembler{
                 this.push_instruction_byte(instruction, "");
             }
             else{
-                console.log(`parameters: ${parameters}`);
+                // console.log(`parameters: ${parameters}`);
                 //Accumulator
                 if(parameters == "A"){
                     this.push_instruction_byte(instruction, "_A");

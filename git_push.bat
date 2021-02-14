@@ -3,7 +3,7 @@
 set "message=%1"
 set test=%2
 if /I "%test%" EQU "test" (
-    call yarn test --no-color 2>test_results.txt
+    call generate_test_results.bat
 )
 
 call git add .
