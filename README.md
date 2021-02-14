@@ -10,9 +10,9 @@ This project is not original in idea, but its not copied code either. The aim he
 
 ## Current Features
 
-### CPU 💠*partial support*
+### CPU ✅
 
-The main focus of this project is the CPU instructions. I am currently working through the instruction sets and refactoring while I go (as many of the instructions share functionality). 
+The main focus of this project is the CPU instructions. All of the CPU instructions are now emulated.
 
 ### Interactive Memory Monitor ✅
 
@@ -20,30 +20,28 @@ I wanted to make my own UI and not just copy Morgan's. While his had all of the 
 
 ### Screen ✅
 
-The code for the screen is based on Morgan's implementation. I just transposed it into a TypeScript class as opposed to an inline function of functions. 
+The code for the screen is based on Morgan's implementation. I just transposed it into a TypeScript class as opposed to an inline function of functions. $0200-$05FF represent each pixel on the screen (32x32 - left to right, top to bottom).
 
-### ~~Code Editor~~ ❌
+### Code Editor ✅
 
-The code editor does not work as an assembly editor at the moment. I am still working on the CPU instructions and load programs using the following syntax:
+The code editor now works as an assembler and can assemble code to bytes.
 
-```typescript
-/*
-	LDA #$69 	; Load Hex 69 into Accumulator
-	PHA 	 	; Push Accumulator to Stack (and decrement stack pointer)
-	LDA #$00	; Load Hex 00 into Accumulator
-	PLA			; Pull a byte from the stack and Load it into the Accumulator (incrementing the Stack Pointer)
-*/
-let program = new Uint8Array([Instruction.LDA_IM, 0x69, Instruction.PHA, Instruction.LDA_IM, 0x00, Instruction.PLA])
-
-// Load the program into Address $F000;
-memory.load_bytes(program, 0xF000);
-```
-
-I will use this functionality to `Assemble` programs writing in the code editor, but for now this is good for testing - its also helps me understand Assembly code is assembled. 
 
 #### Tab Support ✅
 
 Currently, text can be entered and tab support is implemented based on Brad Robinson's StackOverflow answer [[4][4]] 
+
+#### Copy to clipboard ✅
+
+Code entered into the text edito can be copied to clipboard 
+
+### Step Debugging ✅
+
+Code can be stepped through and progress of the program status can be monitored on each step. 
+
+### ~~Running Code~~ ❌
+
+The run button is currently disabled as code needs to be refactored so that running programs run on a separate task. This will prevent endless loops from locking up the browser. 
 
 ## Jest Testing 
 
