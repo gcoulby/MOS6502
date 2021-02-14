@@ -10,6 +10,7 @@
   <title>MOS 6502: Javascript Emulator</title>
 
   <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" rel="stylesheet">
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="css/dist/main.css" rel="stylesheet">
 </head>
@@ -23,11 +24,20 @@
         <div class="container">
           <div class="row">
             <div class="col-7">
-              <textarea class="tab-support" id="code">testing:
-    DEX
-    LDA #$80
-    JMP testing
-    LSR A</textarea>
+              <textarea class="tab-support" id="code">  LDA #00
+  STA $80
+  LDA #02
+  STA $81
+  LDA #01
+loop:
+  STA ($80),Y
+  TAX
+  INX
+  TXA 
+  INY
+  LDX $81
+  CPX #06
+  BNE loop</textarea>
             </div>
 
             <div id="screen-surround" class="col-5">
@@ -36,9 +46,12 @@
           </div>
           <div class="row">
             <div class="col">
-              <button id="assemble-btn" class="btn btn-primary">Assemble</button>
-              <button disabled class="btn btn-primary">Run Program</button>
-              <button disabled class="btn btn-primary">Step Program</button>
+              <button id="clipboard-btn" class="btn btn-light"><i class="far fa-clipboard"></i> Copy to Clipboard</button>
+              <button id="assemble-btn" class="btn btn-primary"><i class="fab fa-dropbox"></i> Assemble</button>
+              <button id="run-btn" disabled class="btn btn-primary"><i class="fas fa-play"></i> Run Program</button>
+              <button id="step-btn" disabled class="btn btn-primary"><i class="fas fa-step-forward"></i> Step Program</button>
+              <button id="hex-dump-btn" disabled class="btn btn-primary"><i class="fas fa-chevron-right"></i> Dump HEX to console</button>
+              <button id="reset-btn" disabled class="btn btn-danger"><i class="fas fa-power-off"></i>  RESET</button>
             </div>
           </div>
 
@@ -130,7 +143,7 @@
                   <div class="input-group mb-3">
                     <label for="bank" style="font-size: 32px; margin-bottom: 0;">$ &nbsp;</label>
                     <input id="bank" type="text" class="form-control" placeholder="Address" aria-label="Address"
-                      aria-describedby="basic-addon2" value="FF00" onkeydown="memory_monitor.bank_keypress(event)">
+                      aria-describedby="basic-addon2" value="0600" onkeydown="memory_monitor.bank_keypress(event)">
                     <div class="input-group-append">
                       <button class="btn btn-primary" type="button" onclick="memory_monitor.bank_select()">GOTO</button>
                     </div>

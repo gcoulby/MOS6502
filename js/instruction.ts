@@ -24,24 +24,24 @@ enum Instruction {
     ASL_ABS     = 0x0E,
     ASL_ABSX    = 0x1E,
     //BCC - Brach if Carry Clear
-    BCC         = 0x90,
+    BCC_REL     = 0x90,
     //BCS - Brach if Carry Set
-    BCS         = 0xB0,
+    BCS_REL     = 0xB0,
     //BEQ - Brach if Equal
-    BEQ         = 0xF0,
+    BEQ_REL     = 0xF0,
     //BIT
     BIT_ZP      = 0x24,
     BIT_ABS     = 0x2C,
     //BMI - Branch if Negative
-    BMI         = 0x30,
+    BMI_REL     = 0x30,
     //BNE - Branch if Not Equal
-    BNE         = 0xD0,
+    BNE_REL     = 0xD0,
     //BPL - Branch if Positive
-    BPL         = 0x10,
+    BPL_REL     = 0x10,
     //BVC - Branch if Overflow Clear
-    BVC         = 0x50,
+    BVC_REL     = 0x50,
     //BVS - Branch if Overflow Set
-    BVS         = 0x70,
+    BVS_REL     = 0x70,
     //BRK - Break
     BRK         = 0x00,
     //CLC - Clear Carry Flag

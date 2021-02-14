@@ -25,24 +25,24 @@ var Instruction;
     Instruction[Instruction["ASL_ABS"] = 14] = "ASL_ABS";
     Instruction[Instruction["ASL_ABSX"] = 30] = "ASL_ABSX";
     //BCC - Brach if Carry Clear
-    Instruction[Instruction["BCC"] = 144] = "BCC";
+    Instruction[Instruction["BCC_REL"] = 144] = "BCC_REL";
     //BCS - Brach if Carry Set
-    Instruction[Instruction["BCS"] = 176] = "BCS";
+    Instruction[Instruction["BCS_REL"] = 176] = "BCS_REL";
     //BEQ - Brach if Equal
-    Instruction[Instruction["BEQ"] = 240] = "BEQ";
+    Instruction[Instruction["BEQ_REL"] = 240] = "BEQ_REL";
     //BIT
     Instruction[Instruction["BIT_ZP"] = 36] = "BIT_ZP";
     Instruction[Instruction["BIT_ABS"] = 44] = "BIT_ABS";
     //BMI - Branch if Negative
-    Instruction[Instruction["BMI"] = 48] = "BMI";
+    Instruction[Instruction["BMI_REL"] = 48] = "BMI_REL";
     //BNE - Branch if Not Equal
-    Instruction[Instruction["BNE"] = 208] = "BNE";
+    Instruction[Instruction["BNE_REL"] = 208] = "BNE_REL";
     //BPL - Branch if Positive
-    Instruction[Instruction["BPL"] = 16] = "BPL";
+    Instruction[Instruction["BPL_REL"] = 16] = "BPL_REL";
     //BVC - Branch if Overflow Clear
-    Instruction[Instruction["BVC"] = 80] = "BVC";
+    Instruction[Instruction["BVC_REL"] = 80] = "BVC_REL";
     //BVS - Branch if Overflow Set
-    Instruction[Instruction["BVS"] = 112] = "BVS";
+    Instruction[Instruction["BVS_REL"] = 112] = "BVS_REL";
     //BRK - Break
     Instruction[Instruction["BRK"] = 0] = "BRK";
     //CLC - Clear Carry Flag
