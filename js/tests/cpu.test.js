@@ -1753,7 +1753,7 @@ test('TYA transfers 0x69 from Register Y to Register A', () => {
 
 
 test('BRK stops the program from running', () => {
-    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BRK]), true);
+    let cpu = get_CPU(0xF000, new Uint8Array([Instruction.BRK]));
     cpu.execute();  
     let byte_check = [Instruction.BRK];
     expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check);

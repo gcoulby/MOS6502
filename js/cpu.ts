@@ -1,9 +1,9 @@
-// // @ts-expect-error - not a module - but this allows Jest test
-// import Flag from "./flag";
-// // @ts-expect-error - not a module - but this allows Jest test
-// import Instruction from "./instruction";
-// // @ts-expect-error - not a module - but this allows Jest test
-// import Register from "./register";
+// @ts-expect-error - not a module - but this allows Jest test
+import Flag from "./flag";
+// @ts-expect-error - not a module - but this allows Jest test
+import Instruction from "./instruction";
+// @ts-expect-error - not a module - but this allows Jest test
+import Register from "./register";
 
 class CPU {
     #PC: number;
@@ -648,7 +648,7 @@ class CPU {
                 case Instruction.RTI:
                     this.P = this.pull_from_stack();
                     this.PC = this.pull_PC_from_stack();
-                    break; // TODO: Test RTI
+                    break;
                 case Instruction.RTS:
                     this.PC = this.pull_PC_from_stack();
                     break;

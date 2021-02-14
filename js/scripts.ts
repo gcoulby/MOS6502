@@ -20,13 +20,24 @@ function update(){
     display.update();
 }
 
+function add_event_listeners(){
+    let assemble_btn = <HTMLButtonElement> document.getElementById("assemble-btn");
+    assemble_btn.addEventListener("click", function(){
+        assembler.assemble(code_editor.textarea.value);
+    });
+}
+
 (function main(args : string[] = null){
     code_editor = new CodeEditor();
-    assembler = new Assembler(code_editor);
+    assembler = new Assembler();
     memory = new Memory();
     display = new Display(memory);
     cpu = new CPU(memory, display.end_addr + 1);
+    add_event_listeners();
+
     console.log(cpu);
+    
+
 
     memory_monitor = new MemoryMonitor(memory, cpu);
     memory_monitor.bank_select();

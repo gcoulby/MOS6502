@@ -1591,7 +1591,7 @@ test('TYA transfers 0x69 from Register Y to Register A', function () {
 /*=============================================*/
 
 test('BRK stops the program from running', function () {
-  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BRK]), true);
+  var cpu = get_CPU(0xF000, new Uint8Array([_instruction["default"].BRK]));
   cpu.execute();
   var byte_check = [_instruction["default"].BRK];
   expect(cpu.debug_stack.slice(0, byte_check.length)).toStrictEqual(byte_check);
